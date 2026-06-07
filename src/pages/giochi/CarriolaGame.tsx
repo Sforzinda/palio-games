@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import GamePlayShell from '../../components/GamePlayShell'
 import GameScoreSubmissionPanel from '../../components/GameScoreSubmissionPanel'
+import { createGameIntegrityTracker, type GameIntegrityResult } from '../../lib/game-anti-cheat'
 
 type GamePhase = 'idle' | 'playing' | 'gameover'
 
@@ -46,9 +47,17 @@ function makeInitialState(): GameState {
 export default function CarriolaGame() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const stateRef = useRef<GameState>(makeInitialState())
+  const integrityRef = useRef(createGameIntegrityTracker({
+    maxAcceptedInputsPerSecond: 32,
+    maxIdenticalPositionStreak: 70,
+    maxScore: 420,
+    minDurationMs: GAME_DURATION * 1000 - 500,
+    minTrustedInputs: 3,
+  }))
   const rafRef = useRef(0)
   const [phase, setPhase] = useState<GamePhase>('idle')
   const [finalScore, setFinalScore] = useState(0)
+  const [integrityResult, setIntegrityResult] = useState<GameIntegrityResult>({ isValid: true })
   const navigate = useNavigate()
 
   function syncCanvasLayout(canvas: HTMLCanvasElement) {
@@ -293,7 +302,10 @@ export default function CarriolaGame() {
       if (s.timeLeft <= 0) {
         s.timeLeft = 0
         s.phase = 'gameover'
-        setFinalScore(Math.floor(s.meters))
+        const score = Math.floor(s.meters)
+        integrityRef.current.end()
+        setFinalScore(score)
+        setIntegrityResult(integrityRef.current.validate(score))
         setPhase('gameover')
         return
       }
@@ -344,6 +356,8 @@ export default function CarriolaGame() {
     function handleTouchStart(e: TouchEvent) {
       e.preventDefault()
       if (stateRef.current.phase !== 'playing') return
+      const touch = e.changedTouches[0]
+      if (!touch || !integrityRef.current.recordInput(e, { x: touch.clientX, y: touch.clientY })) return
       const s = stateRef.current
       for (let i = 0; i < e.changedTouches.length; i++) {
         s.velocity = Math.min(s.velocity + TAP_IMPULSE, MAX_VELOCITY)
@@ -351,8 +365,9 @@ export default function CarriolaGame() {
       s.tapFeedbackTime = 0.15
     }
 
-    function handleMouseDown(_e: MouseEvent) {
+    function handleMouseDown(e: MouseEvent) {
       if (stateRef.current.phase !== 'playing') return
+      if (!integrityRef.current.recordInput(e, { x: e.clientX, y: e.clientY })) return
       const s = stateRef.current
       s.velocity = Math.min(s.velocity + TAP_IMPULSE, MAX_VELOCITY)
       s.tapFeedbackTime = 0.15
@@ -374,8 +389,10 @@ export default function CarriolaGame() {
     const s = stateRef.current
     Object.assign(s, makeInitialState())
     s.phase = 'playing'
+    integrityRef.current.start()
     setPhase('playing')
     setFinalScore(0)
+    setIntegrityResult({ isValid: true })
   }
 
   const isPlaying = phase === 'playing'
@@ -421,6 +438,8 @@ export default function CarriolaGame() {
                 </p>
                 <GameScoreSubmissionPanel
                   gameId="carriola"
+                  integrityMessage={integrityResult.message}
+                  isScoreValid={integrityResult.isValid}
                   score={finalScore}
                   onPlayAgain={startGame}
                   onViewLeaderboard={() => navigate('/giochi/classifica')}

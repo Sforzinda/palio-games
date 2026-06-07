@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import GamePlayShell from '../../components/GamePlayShell'
 import GameScoreSubmissionPanel from '../../components/GameScoreSubmissionPanel'
+import { createGameIntegrityTracker, type GameIntegrityResult } from '../../lib/game-anti-cheat'
 
 type GamePhase = 'idle' | 'playing' | 'gameover'
 
@@ -103,9 +104,17 @@ function makeInitialState(canvasW: number, canvasH: number): GameState {
 export default function TorreGame() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const stateRef = useRef<GameState | null>(null)
+  const integrityRef = useRef(createGameIntegrityTracker({
+    maxAcceptedInputsPerSecond: 16,
+    maxIdenticalPositionStreak: 120,
+    maxScore: 400,
+    minDurationMs: 300,
+    minTrustedInputs: 1,
+  }))
   const rafRef = useRef(0)
   const [phase, setPhase] = useState<GamePhase>('idle')
   const [finalScore, setFinalScore] = useState(0)
+  const [integrityResult, setIntegrityResult] = useState<GameIntegrityResult>({ isValid: true })
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -372,6 +381,19 @@ export default function TorreGame() {
       e.preventDefault()
       const s = stateRef.current
       if (!s || s.phase !== 'playing') return
+      let inputX = 0
+      let inputY = 0
+      if (e instanceof TouchEvent) {
+        const touch = e.changedTouches[0]
+        if (!touch) return
+        inputX = touch.clientX
+        inputY = touch.clientY
+      } else {
+        const mouseEvent = e as MouseEvent
+        inputX = mouseEvent.clientX
+        inputY = mouseEvent.clientY
+      }
+      if (!integrityRef.current.recordInput(e, { x: inputX, y: inputY })) return
 
       const m = s.moving
       const topBlock = s.blocks[s.blocks.length - 1]
@@ -389,7 +411,9 @@ export default function TorreGame() {
       if (overlap <= 0) {
         // Nessun overlap → gameover
         s.phase = 'gameover'
+        integrityRef.current.end()
         setFinalScore(s.level)
+        setIntegrityResult(integrityRef.current.validate(s.level))
         setPhase('gameover')
         return
       }
@@ -459,8 +483,10 @@ export default function TorreGame() {
     const canvas = canvasRef.current!
     stateRef.current = makeInitialState(canvas.width, canvas.height)
     stateRef.current.phase = 'playing'
+    integrityRef.current.start()
     setPhase('playing')
     setFinalScore(0)
+    setIntegrityResult({ isValid: true })
   }
 
   const isPlaying = phase === 'playing'
@@ -509,6 +535,8 @@ export default function TorreGame() {
                 </p>
                 <GameScoreSubmissionPanel
                   gameId="torre"
+                  integrityMessage={integrityResult.message}
+                  isScoreValid={integrityResult.isValid}
                   score={finalScore}
                   onPlayAgain={startGame}
                   onViewLeaderboard={() => navigate('/giochi/classifica')}

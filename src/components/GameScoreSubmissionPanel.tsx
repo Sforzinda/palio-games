@@ -8,6 +8,8 @@ import { saveScore, type GameId } from '../lib/game-scores'
 
 interface GameScoreSubmissionPanelProps {
   gameId: GameId
+  integrityMessage?: string
+  isScoreValid?: boolean
   score: number
   onPlayAgain: () => void
   onViewLeaderboard: () => void
@@ -43,6 +45,8 @@ const toDigitsOnly = (value: string) => value.replace(/\D+/g, '')
 
 export default function GameScoreSubmissionPanel({
   gameId,
+  integrityMessage,
+  isScoreValid = true,
   score,
   onPlayAgain,
   onViewLeaderboard,
@@ -125,7 +129,7 @@ export default function GameScoreSubmissionPanel({
   }
 
   const handleSaveScore = async () => {
-    if (!isNameValid || savingScore) return
+    if (!isNameValid || savingScore || !isScoreValid) return
 
     setSavingScore(true)
     setErrorMessage('')
@@ -143,7 +147,7 @@ export default function GameScoreSubmissionPanel({
   }
 
   const handleOpenRegistration = () => {
-    if (!isNameValid || savingScore || registering || loggingIn) return
+    if (!isNameValid || savingScore || registering || loggingIn || !isScoreValid) return
 
     setErrorMessage('')
     setShowLoginForm(false)
@@ -156,7 +160,7 @@ export default function GameScoreSubmissionPanel({
   }
 
   const handleOpenLogin = () => {
-    if (savingScore || registering || loggingIn) return
+    if (savingScore || registering || loggingIn || !isScoreValid) return
 
     setErrorMessage('')
     setShowRegistrationForm(false)
@@ -541,6 +545,11 @@ export default function GameScoreSubmissionPanel({
   return (
     <>
       <div className="w-full max-w-md flex flex-col items-center gap-3">
+        {!isScoreValid && (
+          <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-center text-sm text-red-800">
+            {integrityMessage ?? 'Partita non valida: rigioca senza automatismi.'}
+          </p>
+        )}
         <input
           value={playerName}
           onChange={(event) => setPlayerName(event.target.value)}
@@ -557,7 +566,7 @@ export default function GameScoreSubmissionPanel({
         )}
         <button
           onClick={handleSaveScore}
-          disabled={!isNameValid || savingScore}
+          disabled={!isNameValid || savingScore || !isScoreValid}
           className="btn-game disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {savingScore ? 'Salvataggio...' : 'Salva punteggio'}
@@ -566,14 +575,14 @@ export default function GameScoreSubmissionPanel({
           <>
             <button
               onClick={handleOpenRegistration}
-              disabled={!isNameValid || savingScore || registering || loggingIn}
+              disabled={!isNameValid || savingScore || registering || loggingIn || !isScoreValid}
               className="btn-game disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Registrati e salva i progressi
             </button>
             <button
               onClick={handleOpenLogin}
-              disabled={savingScore || registering || loggingIn}
+              disabled={savingScore || registering || loggingIn || !isScoreValid}
               className="text-sm font-semibold text-palio-700 underline underline-offset-2 hover:text-palio-900 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Ho gia un account, accedi

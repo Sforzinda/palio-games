@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import GamePlayShell from '../../components/GamePlayShell'
 import GameScoreSubmissionPanel from '../../components/GameScoreSubmissionPanel'
+import { createGameIntegrityTracker, type GameIntegrityResult } from '../../lib/game-anti-cheat'
 
 type GamePhase = 'idle' | 'playing' | 'gameover'
 
@@ -80,9 +81,17 @@ function makeInitialState(): GameState {
 export default function MelocotognoGame() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const stateRef = useRef<GameState>(makeInitialState())
+  const integrityRef = useRef(createGameIntegrityTracker({
+    maxAcceptedInputsPerSecond: 6,
+    maxIdenticalPositionStreak: 30,
+    maxScore: 800,
+    minDurationMs: GAME_DURATION * 1000 - 500,
+    minTrustedInputs: 1,
+  }))
   const rafRef = useRef(0)
   const [phase, setPhase] = useState<GamePhase>('idle')
   const [finalScore, setFinalScore] = useState(0)
+  const [integrityResult, setIntegrityResult] = useState<GameIntegrityResult>({ isValid: true })
   const navigate = useNavigate()
 
   function syncCanvasLayout(canvas: HTMLCanvasElement) {
@@ -483,7 +492,9 @@ export default function MelocotognoGame() {
       if (s.timeLeft <= 0) {
         s.timeLeft = 0
         s.phase = 'gameover'
+        integrityRef.current.end()
         setFinalScore(s.score)
+        setIntegrityResult(integrityRef.current.validate(s.score))
         setPhase('gameover')
         return
       }
@@ -553,7 +564,6 @@ export default function MelocotognoGame() {
       if (s.phase !== 'playing') return
       const elapsed = GAME_DURATION - s.timeLeft
       if (elapsed - s.lastTapTime < TAP_COOLDOWN) return
-      s.lastTapTime = elapsed
 
       let tapX: number, tapY: number
       const rect = canvas.getBoundingClientRect()
@@ -571,6 +581,8 @@ export default function MelocotognoGame() {
       // Solo dal basso: non si può toccare direttamente le ceste
       const launchZoneY = canvas.height * 0.70
       if (tapY < launchZoneY) return
+      if (!integrityRef.current.recordInput(e, { x: tapX, y: tapY })) return
+      s.lastTapTime = elapsed
 
       // Potenza proporzionale a quanto in basso si tocca:
       // vicino alla linea = 2pt, in basso = 5/10pt
@@ -618,8 +630,10 @@ export default function MelocotognoGame() {
     s.popups = []
     s.wind = { strength: 0 }
     s.lastTapTime = -999
+    integrityRef.current.start()
     setPhase('playing')
     setFinalScore(0)
+    setIntegrityResult({ isValid: true })
   }
 
   const isPlaying = phase === 'playing'
@@ -664,6 +678,8 @@ export default function MelocotognoGame() {
                 </p>
                 <GameScoreSubmissionPanel
                   gameId="melocotogno"
+                  integrityMessage={integrityResult.message}
+                  isScoreValid={integrityResult.isValid}
                   score={finalScore}
                   onPlayAgain={startGame}
                   onViewLeaderboard={() => navigate('/giochi/classifica')}

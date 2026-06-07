@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import GamePlayShell from '../../components/GamePlayShell'
 import GameScoreSubmissionPanel from '../../components/GameScoreSubmissionPanel'
+import { createGameIntegrityTracker, type GameIntegrityResult } from '../../lib/game-anti-cheat'
 
 type GamePhase = 'idle' | 'playing' | 'gameover'
 
@@ -53,9 +54,17 @@ function makeInitialState(): GameState {
 export default function CerchioGame() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const stateRef = useRef<GameState>(makeInitialState())
+  const integrityRef = useRef(createGameIntegrityTracker({
+    maxAcceptedInputsPerSecond: 24,
+    maxIdenticalPositionStreak: 80,
+    maxScore: 2400,
+    minDurationMs: 1000,
+    minTrustedInputs: 1,
+  }))
   const rafRef = useRef(0)
   const [phase, setPhase] = useState<GamePhase>('idle')
   const [finalScore, setFinalScore] = useState(0)
+  const [integrityResult, setIntegrityResult] = useState<GameIntegrityResult>({ isValid: true })
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -463,7 +472,9 @@ export default function CerchioGame() {
       if (Math.abs(s.tilt) >= MAX_TILT) {
         s.phase = 'gameover'
         const score = Math.floor(s.distance / 80)
+        integrityRef.current.end()
         setFinalScore(score)
+        setIntegrityResult(integrityRef.current.validate(score))
         setPhase('gameover')
         return
       }
@@ -505,11 +516,23 @@ export default function CerchioGame() {
       if (s.phase !== 'playing') return
 
       let tapX: number
+      let clientX: number
+      let clientY: number
       if (e instanceof TouchEvent) {
-        tapX = e.touches[0].clientX
+        const touch = e.changedTouches[0]
+        if (!touch) return
+        clientX = touch.clientX
+        clientY = touch.clientY
       } else {
-        tapX = (e as MouseEvent).clientX
+        const mouseEvent = e as MouseEvent
+        clientX = mouseEvent.clientX
+        clientY = mouseEvent.clientY
       }
+
+      const rect = canvas.getBoundingClientRect()
+      const scaleX = rect.width > 0 ? canvas.width / rect.width : 1
+      tapX = (clientX - rect.left) * scaleX
+      if (!integrityRef.current.recordInput(e, { x: clientX, y: clientY })) return
 
       const w = canvas.width
       if (tapX < w / 2) {
@@ -539,8 +562,10 @@ export default function CerchioGame() {
     s.hoopX = canvasRef.current!.width * 0.5
     s.tilt = (Math.random() - 0.5) * 0.18
     s.tiltVelocity = (Math.random() - 0.5) * 0.35
+    integrityRef.current.start()
     setPhase('playing')
     setFinalScore(0)
+    setIntegrityResult({ isValid: true })
   }
 
   const isPlaying = phase === 'playing'
@@ -589,6 +614,8 @@ export default function CerchioGame() {
                 </p>
                 <GameScoreSubmissionPanel
                   gameId="cerchio"
+                  integrityMessage={integrityResult.message}
+                  isScoreValid={integrityResult.isValid}
                   score={finalScore}
                   onPlayAgain={startGame}
                   onViewLeaderboard={() => navigate('/giochi/classifica')}
