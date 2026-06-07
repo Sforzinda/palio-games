@@ -1,0 +1,23 @@
+name: Notify consumer repos
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger cassa-palio submodule update
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.CONSUMER_REPOS_PAT }}
+          repository: Sforzinda/cassa-palio
+          event-type: palio-games-updated
+
+      - name: Trigger fantapalio submodule update
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.CONSUMER_REPOS_PAT }}
+          repository: Sforzinda/fantapalio
+          event-type: palio-games-updated
