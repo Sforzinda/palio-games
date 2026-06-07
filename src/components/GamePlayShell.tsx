@@ -29,7 +29,7 @@ export default function GamePlayShell({
   }
 
   return (
-    <div className={isPlaying ? 'fixed inset-0 z-50 flex flex-col bg-palio-950' : 'min-h-screen flex flex-col bg-amber-50'}>
+    <div className={isPlaying ? 'fixed inset-0 z-50 flex flex-col bg-palio-950 text-amber-50' : 'min-h-screen flex flex-col bg-amber-50 text-palio-950 dark:bg-palio-950 dark:text-amber-50'}>
       {!isPlaying && <Header />}
 
       <main className="flex-1 flex flex-col">
@@ -37,7 +37,12 @@ export default function GamePlayShell({
 
         {isPlaying && (
           <div className="game-play-topbar">
-            <button type="button" onClick={handleBack} className="game-exit-button" aria-label="Torna indietro">
+            <button
+              type="button"
+              onClick={handleBack}
+              className="game-exit-button focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-amber-300"
+              aria-label="Torna indietro"
+            >
               <ArrowLeft className="h-4 w-4" aria-hidden="true" />
               <span>Torna indietro</span>
             </button>

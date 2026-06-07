@@ -519,7 +519,7 @@ export default function TorreGame() {
                 <p>❌ Se cade completamente, è finita</p>
                 <p>🏰 Ogni livello il blocco si sposta più veloce</p>
               </div>
-              <button onClick={startGame} className="btn-game">Costruisci!</button>
+              <button onClick={startGame} className="btn-game focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-amber-300">Costruisci!</button>
             </div>
           )}
 

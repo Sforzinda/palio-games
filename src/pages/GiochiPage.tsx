@@ -144,7 +144,7 @@ export default function GiochiPage() {
   const { Header, Footer } = usePalioGamesLayout()
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-[#fdf8f0] text-palio-950 dark:bg-palio-950 dark:text-amber-50">
       <Header />
       <main className="flex-1">
         {/* Hero banner medievale */}
@@ -160,14 +160,14 @@ export default function GiochiPage() {
           <div className="flex flex-wrap items-center justify-center gap-3">
             <Link
               to="/giochi/classifica"
-              className="inline-flex items-center gap-2 btn-game animate-glow-pulse"
+              className="inline-flex items-center gap-2 btn-game animate-glow-pulse focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-amber-300"
             >
               <Trophy size={20} />
               Classifica
             </Link>
             <Link
               to="/giochi/profilo"
-              className="inline-flex items-center gap-2 rounded-xl border-2 border-amber-300 bg-palio-800/70 px-5 py-3 font-medieval text-amber-100 hover:bg-palio-700"
+              className="inline-flex items-center gap-2 rounded-xl border-2 border-amber-300 bg-palio-800/70 px-5 py-3 font-medieval text-amber-100 transition-colors hover:bg-palio-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-amber-300 dark:border-amber-200 dark:bg-palio-900 dark:text-amber-50 dark:hover:bg-palio-800"
             >
               🛡 Profilo
             </Link>
@@ -175,19 +175,19 @@ export default function GiochiPage() {
         </section>
 
         {/* Divisore ornamentale */}
-        <div className="text-center py-3" style={{ backgroundColor: '#fdf8f0' }}>
+        <div className="bg-[#fdf8f0] py-3 text-center dark:bg-palio-950">
           <span className="ornament text-2xl">— ✦ ✦ ✦ —</span>
         </div>
 
         {/* 4 game cards */}
-        <section className="py-8 px-4" style={{ backgroundColor: '#fdf8f0' }}>
+        <section className="bg-[#fdf8f0] px-4 py-8 dark:bg-palio-950">
           <div className="max-w-2xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-6">
             {GAMES.map((game) => (
-              <div key={game.id} className="game-card">
+              <div key={game.id} className="game-card border border-amber-200 bg-white/90 text-palio-950 shadow-md dark:border-amber-700/50 dark:bg-palio-900/90 dark:text-amber-50">
                 <div className="p-6 flex flex-col items-center text-center gap-4">
                   {/* Cornice ornamentale per illustrazione */}
                   <div
-                    className="w-32 h-32 animate-float rounded-full flex items-center justify-center"
+                    className="flex h-32 w-32 animate-float items-center justify-center rounded-full dark:shadow-amber-950"
                     style={{
                       background: 'radial-gradient(circle, #fff8e8 60%, #f0d890 100%)',
                       border: '3px solid #d4a017',
@@ -197,13 +197,13 @@ export default function GiochiPage() {
                     <div className="w-24 h-24">{game.illustration}</div>
                   </div>
 
-                  <h2 className="font-medieval text-xl text-palio-800 leading-tight">
+                  <h2 className="font-medieval text-xl leading-tight text-palio-800 dark:text-amber-100">
                     {game.title}
                   </h2>
-                  <p className="text-gray-600 text-sm leading-relaxed">{game.desc}</p>
+                  <p className="text-sm leading-relaxed text-palio-700 dark:text-amber-100/80">{game.desc}</p>
                   <Link
                     to={game.path}
-                    className="btn-game w-full text-center"
+                    className="btn-game w-full text-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-palio-700 dark:focus-visible:outline-amber-300"
                   >
                     ▶ Gioca
                   </Link>
@@ -213,7 +213,7 @@ export default function GiochiPage() {
           </div>
 
           {/* Footer cards */}
-          <p className="text-center text-amber-800/60 text-xs mt-8 font-medieval tracking-wide">
+          <p className="mt-8 text-center font-medieval text-xs tracking-wide text-amber-800/70 dark:text-amber-100/70">
             ⚜ Palio di Vigevano ⚜
           </p>
         </section>

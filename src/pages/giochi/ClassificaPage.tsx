@@ -81,17 +81,17 @@ function ContradaCard({
     <article
       className={`rounded-2xl border p-4 shadow-md ${
         isCurrentPlayerContrada
-          ? 'border-palio-500 bg-palio-50/80 shadow-palio-200'
-          : 'border-amber-200 bg-white/90'
+          ? 'border-palio-500 bg-palio-50/80 shadow-palio-200 dark:border-amber-400 dark:bg-palio-900 dark:shadow-none'
+          : 'border-amber-200 bg-white/90 dark:border-amber-700/50 dark:bg-palio-900/90'
       }`}
     >
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h3 className="font-medieval text-xl text-palio-900">{group.contradaName}</h3>
-          <p className="text-sm text-palio-700">{group.totalPlayers} giocatori classificati</p>
+          <h3 className="font-medieval text-xl text-palio-900 dark:text-amber-100">{group.contradaName}</h3>
+          <p className="text-sm text-palio-700 dark:text-amber-100/80">{group.totalPlayers} giocatori classificati</p>
         </div>
         {isCurrentPlayerContrada && (
-          <span className="rounded-full border border-palio-400 bg-palio-100 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-palio-800">
+          <span className="rounded-full border border-palio-400 bg-palio-100 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-palio-800 dark:border-amber-400 dark:bg-amber-300 dark:text-palio-950">
             La tua contrada
           </span>
         )}
@@ -103,22 +103,22 @@ function ContradaCard({
             key={`${group.contradaSlug}-${entry.rank}-${entry.name}`}
             className={`rounded-xl border px-3 py-3 ${
               entry.isCurrentPlayer
-                ? 'border-palio-500 bg-palio-100/70'
-                : 'border-amber-100 bg-[#fdf8f0]'
+                ? 'border-palio-500 bg-palio-100/70 dark:border-amber-400 dark:bg-palio-800'
+                : 'border-amber-100 bg-[#fdf8f0] dark:border-amber-700/40 dark:bg-palio-950/70'
             }`}
           >
             <div className="flex items-center justify-between gap-3">
               <div className="flex min-w-0 items-center gap-3">
                 <span className="text-xl">{renderRank(entry.rank)}</span>
                 <div className="min-w-0">
-                  <p className="truncate font-semibold text-palio-900">{entry.name}</p>
-                  <p className="text-xs text-gray-500">{entry.date}</p>
+                  <p className="truncate font-semibold text-palio-900 dark:text-amber-50">{entry.name}</p>
+                  <p className="text-xs text-palio-600 dark:text-amber-100/65">{entry.date}</p>
                 </div>
               </div>
               <div className="text-right">
-                <p className="font-bold text-palio-800">
+                <p className="font-bold text-palio-800 dark:text-amber-100">
                   {entry.score}
-                  <span className="ml-1 text-xs text-gray-500">{activeTab.unit}</span>
+                  <span className="ml-1 text-xs text-palio-600 dark:text-amber-100/65">{activeTab.unit}</span>
                 </p>
               </div>
             </div>
@@ -139,7 +139,7 @@ function TotalPointsSummary({ entry }: { entry: TotalLeaderboardEntry }) {
         return (
           <span
             key={game.gameId}
-            className="rounded-full border border-amber-200 bg-amber-50 px-2 py-1 text-[11px] font-semibold text-palio-800"
+            className="rounded-full border border-amber-200 bg-amber-50 px-2 py-1 text-[11px] font-semibold text-palio-800 dark:border-amber-700/60 dark:bg-palio-800 dark:text-amber-100"
             title={`#${game.rank} su ${game.totalPlayers} giocatori`}
           >
             {tab?.label ?? game.gameId}: {game.palioPoints}
@@ -153,14 +153,14 @@ function TotalPointsSummary({ entry }: { entry: TotalLeaderboardEntry }) {
 function TotalContradaTable({ contrade }: { contrade: TotalContradaLeaderboardEntry[] }) {
   if (contrade.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed border-amber-300 bg-white/80 p-6 text-center text-sm text-palio-800">
+      <div className="rounded-2xl border border-dashed border-amber-300 bg-white/80 p-6 text-center text-sm text-palio-800 dark:border-amber-700 dark:bg-palio-900/80 dark:text-amber-100">
         Nessuna contrada ha ancora giocatori registrati nelle classifiche.
       </div>
     )
   }
 
   return (
-    <div className="rounded-xl overflow-hidden border-2 border-amber-300 shadow-lg">
+    <div className="overflow-x-auto rounded-xl border-2 border-amber-300 shadow-lg dark:border-amber-700">
       <table className="w-full">
         <thead style={{ background: 'linear-gradient(to right, #581210, #7a2e0a)' }}>
           <tr>
@@ -174,13 +174,14 @@ function TotalContradaTable({ contrade }: { contrade: TotalContradaLeaderboardEn
           {contrade.map((entry, index) => (
             <tr
               key={entry.contradaSlug}
-              className="border-b border-amber-200"
-              style={{ backgroundColor: index % 2 === 0 ? '#fdf8f0' : '#f5ead8' }}
+              className={`border-b border-amber-200 dark:border-amber-800 ${
+                index % 2 === 0 ? 'bg-[#fdf8f0] dark:bg-palio-950' : 'bg-[#f5ead8] dark:bg-palio-900'
+              }`}
             >
-              <td className="py-3 px-3 font-bold text-palio-700 text-lg w-8">{renderRank(entry.rank)}</td>
-              <td className="py-3 px-3 font-medium text-palio-900">{entry.contradaName}</td>
-              <td className="py-3 px-3 text-right text-sm text-palio-800">{entry.totalPlayers}</td>
-              <td className="py-3 px-3 text-right font-bold text-palio-800">{entry.totalPoints}</td>
+              <td className="w-8 px-3 py-3 text-lg font-bold text-palio-700 dark:text-amber-200">{renderRank(entry.rank)}</td>
+              <td className="px-3 py-3 font-medium text-palio-900 dark:text-amber-50">{entry.contradaName}</td>
+              <td className="px-3 py-3 text-right text-sm text-palio-800 dark:text-amber-100/80">{entry.totalPlayers}</td>
+              <td className="px-3 py-3 text-right font-bold text-palio-800 dark:text-amber-100">{entry.totalPoints}</td>
             </tr>
           ))}
         </tbody>
@@ -230,24 +231,24 @@ export default function ClassificaPage() {
   const currentPlayerContradaSlug = currentPlayer?.contradaSlug ?? trackedSession?.contradaSlug ?? null
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#fdf8f0' }}>
+    <div className="min-h-screen flex flex-col bg-[#fdf8f0] text-palio-950 dark:bg-palio-950 dark:text-amber-50">
       <Header />
       <main className="flex-1 max-w-5xl mx-auto w-full px-4 py-8">
         <div className="text-center mb-6">
           <p className="ornament mb-1">⚜ ⚔ ⚜</p>
-          <h1 className="font-medieval text-3xl text-palio-800">Classifica</h1>
-          <p className="text-gray-500 text-sm mt-1">Generale, per contrada e posizione personale in ogni gioco</p>
+          <h1 className="font-medieval text-3xl text-palio-800 dark:text-amber-100">Classifica</h1>
+          <p className="mt-1 text-sm text-palio-600 dark:text-amber-100/70">Generale, per contrada e posizione personale in ogni gioco</p>
         </div>
 
-        <div className="grid grid-cols-2 gap-1 mb-6 rounded-xl p-1 sm:grid-cols-5" style={{ backgroundColor: '#f0d890' }}>
+        <div className="mb-6 grid grid-cols-2 gap-1 rounded-xl bg-[#f0d890] p-1 sm:grid-cols-5 dark:bg-palio-900 dark:ring-1 dark:ring-amber-700/60">
           {NAVIGATION_TABS.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActive(tab.id)}
-              className={`rounded-lg py-2 px-1 text-xs font-bold transition-all duration-200 leading-tight ${
+              className={`rounded-lg px-1 py-2 text-xs font-bold leading-tight transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-palio-800 dark:focus-visible:outline-amber-300 ${
                 active === tab.id
-                  ? 'bg-palio-700 text-white shadow-md'
-                  : 'text-palio-700 hover:bg-amber-200'
+                  ? 'bg-palio-700 text-white shadow-md dark:bg-amber-300 dark:text-palio-950'
+                  : 'text-palio-700 hover:bg-amber-200 dark:text-amber-100 dark:hover:bg-palio-800'
               }`}
             >
               <div className="text-base mb-0.5">{tab.icon}</div>
@@ -257,24 +258,24 @@ export default function ClassificaPage() {
         </div>
 
         {!loading && !hasRegisteredSession && (
-          <section className="mb-6 rounded-2xl border border-palio-300 bg-gradient-to-r from-palio-50 to-amber-50 p-5 shadow-sm">
-            <p className="font-medieval text-xl text-palio-900">Vuoi vedere come stai nella tua contrada?</p>
-            <p className="mt-2 text-sm text-palio-800">
+          <section className="mb-6 rounded-2xl border border-palio-300 bg-gradient-to-r from-palio-50 to-amber-50 p-5 shadow-sm dark:border-amber-700/60 dark:from-palio-900 dark:to-palio-800">
+            <p className="font-medieval text-xl text-palio-900 dark:text-amber-100">Vuoi vedere come stai nella tua contrada?</p>
+            <p className="mt-2 text-sm text-palio-800 dark:text-amber-100/80">
               Registrati al profilo giochi per confrontarti anche con i giocatori della tua contrada e sbloccare i badge classifica.
             </p>
-            <Link to="/giochi/profilo" className="btn-game inline-block mt-4">
+            <Link to="/giochi/profilo" className="btn-game mt-4 inline-block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-palio-700 dark:focus-visible:outline-amber-300">
               Registrati o accedi
             </Link>
           </section>
         )}
 
         {!loading && !isTotalTab && hasRegisteredSession && currentPlayer && (
-          <section className="mb-6 rounded-2xl border border-palio-400 bg-gradient-to-br from-[#fff4d9] to-[#f7ead1] p-5 shadow-md">
+          <section className="mb-6 rounded-2xl border border-palio-400 bg-gradient-to-br from-[#fff4d9] to-[#f7ead1] p-5 shadow-md dark:border-amber-600 dark:from-palio-900 dark:to-palio-800">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
               <div>
-                <p className="text-sm uppercase tracking-[0.18em] text-palio-700 font-bold">La tua posizione</p>
-                <h2 className="font-medieval text-2xl text-palio-900 mt-1">{currentPlayer.name}</h2>
-                <p className="text-sm text-palio-800 mt-1">
+                <p className="text-sm font-bold uppercase tracking-[0.18em] text-palio-700 dark:text-amber-200">La tua posizione</p>
+                <h2 className="mt-1 font-medieval text-2xl text-palio-900 dark:text-amber-50">{currentPlayer.name}</h2>
+                <p className="mt-1 text-sm text-palio-800 dark:text-amber-100/80">
                   {currentPlayer.contradaName
                     ? `Contrada ${currentPlayer.contradaName}`
                     : 'Contrada non impostata'}
@@ -284,30 +285,30 @@ export default function ClassificaPage() {
             </div>
 
             {currentPlayer.score === null ? (
-              <p className="mt-4 text-sm text-palio-800">
+              <p className="mt-4 text-sm text-palio-800 dark:text-amber-100/80">
                 Sei registrato ma non hai ancora un punteggio in questo gioco. Gioca una partita per comparire sia nella classifica generale sia in quella della tua contrada.
               </p>
             ) : (
               <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                <div className="rounded-xl bg-white/75 p-4 border border-amber-200">
-                  <p className="text-xs uppercase tracking-[0.18em] text-gray-500 font-bold">Punteggio</p>
-                  <p className="mt-1 font-medieval text-2xl text-palio-900">
+                <div className="rounded-xl border border-amber-200 bg-white/75 p-4 dark:border-amber-700/50 dark:bg-palio-950/70">
+                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-palio-600 dark:text-amber-100/70">Punteggio</p>
+                  <p className="mt-1 font-medieval text-2xl text-palio-900 dark:text-amber-50">
                     {currentPlayer.score} <span className="text-sm">{activeTab.unit}</span>
                   </p>
                 </div>
-                <div className="rounded-xl bg-white/75 p-4 border border-amber-200">
-                  <p className="text-xs uppercase tracking-[0.18em] text-gray-500 font-bold">Classifica generale</p>
-                  <p className="mt-1 font-medieval text-2xl text-palio-900">
+                <div className="rounded-xl border border-amber-200 bg-white/75 p-4 dark:border-amber-700/50 dark:bg-palio-950/70">
+                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-palio-600 dark:text-amber-100/70">Classifica generale</p>
+                  <p className="mt-1 font-medieval text-2xl text-palio-900 dark:text-amber-50">
                     {currentPlayer.globalRank ? `#${currentPlayer.globalRank}` : 'N/D'}
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">su {currentPlayer.totalPlayers} giocatori</p>
+                  <p className="mt-1 text-xs text-palio-600 dark:text-amber-100/65">su {currentPlayer.totalPlayers} giocatori</p>
                 </div>
-                <div className="rounded-xl bg-white/75 p-4 border border-amber-200">
-                  <p className="text-xs uppercase tracking-[0.18em] text-gray-500 font-bold">Nella tua contrada</p>
-                  <p className="mt-1 font-medieval text-2xl text-palio-900">
+                <div className="rounded-xl border border-amber-200 bg-white/75 p-4 dark:border-amber-700/50 dark:bg-palio-950/70">
+                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-palio-600 dark:text-amber-100/70">Nella tua contrada</p>
+                  <p className="mt-1 font-medieval text-2xl text-palio-900 dark:text-amber-50">
                     {currentPlayer.contradaRank ? `#${currentPlayer.contradaRank}` : 'N/D'}
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">su {currentPlayer.contradaPlayers} giocatori</p>
+                  <p className="mt-1 text-xs text-palio-600 dark:text-amber-100/65">su {currentPlayer.contradaPlayers} giocatori</p>
                 </div>
               </div>
             )}
@@ -315,12 +316,12 @@ export default function ClassificaPage() {
         )}
 
         {!loading && hasRegisteredSession && !currentPlayer && (
-          <section className="mb-6 rounded-2xl border border-amber-300 bg-amber-50 p-5 shadow-sm">
-            <p className="font-medieval text-xl text-palio-900">Profilo giochi non trovato</p>
-            <p className="mt-2 text-sm text-palio-800">
+          <section className="mb-6 rounded-2xl border border-amber-300 bg-amber-50 p-5 shadow-sm dark:border-amber-700/60 dark:bg-palio-900">
+            <p className="font-medieval text-xl text-palio-900 dark:text-amber-100">Profilo giochi non trovato</p>
+            <p className="mt-2 text-sm text-palio-800 dark:text-amber-100/80">
               La sessione salvata non risulta piu valida. Rientra dal profilo per vedere anche la tua posizione nella classifica di contrada.
             </p>
-            <Link to="/giochi/profilo" className="btn-game inline-block mt-4">
+            <Link to="/giochi/profilo" className="btn-game mt-4 inline-block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-palio-700 dark:focus-visible:outline-amber-300">
               Vai al profilo
             </Link>
           </section>
@@ -329,17 +330,17 @@ export default function ClassificaPage() {
         {loading && (
           <div className="text-center py-12">
             <div className="inline-block w-8 h-8 border-4 border-amber-400 border-t-transparent rounded-full animate-spin mb-3" />
-            <p className="text-gray-500 text-sm">Caricamento classifica...</p>
+            <p className="text-sm text-palio-600 dark:text-amber-100/70">Caricamento classifica...</p>
           </div>
         )}
 
         {!loading && (isTotalTab ? totalScores.length === 0 : scores.length === 0) && (
           <div className="text-center py-12">
             <p className="text-4xl mb-3">🏆</p>
-            <p className="font-medieval text-palio-800 text-lg mb-1">Nessun punteggio</p>
-            <p className="text-gray-500 text-sm">Sii il primo a giocare!</p>
+            <p className="mb-1 font-medieval text-lg text-palio-800 dark:text-amber-100">Nessun punteggio</p>
+            <p className="text-sm text-palio-600 dark:text-amber-100/70">Sii il primo a giocare!</p>
             {!isTotalTab && (
-              <Link to={`/giochi/${activeGameId}`} className="btn-game inline-block mt-6">
+              <Link to={`/giochi/${activeGameId}`} className="btn-game mt-6 inline-block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-palio-700 dark:focus-visible:outline-amber-300">
                 Gioca ora
               </Link>
             )}
@@ -352,13 +353,13 @@ export default function ClassificaPage() {
               <>
                 <section className="mb-8">
                   <div className="mb-4">
-                    <h2 className="font-medieval text-2xl text-palio-900">Classifica totale del Palio</h2>
-                    <p className="text-sm text-gray-500">
+                    <h2 className="font-medieval text-2xl text-palio-900 dark:text-amber-100">Classifica totale del Palio</h2>
+                    <p className="text-sm text-palio-600 dark:text-amber-100/70">
                       In ogni gioco il primo prende tanti punti quanti sono i giocatori classificati, l'ultimo prende 1 punto.
                     </p>
                   </div>
 
-                  <div className="rounded-xl overflow-hidden border-2 border-amber-300 shadow-lg">
+                  <div className="overflow-x-auto rounded-xl border-2 border-amber-300 shadow-lg dark:border-amber-700">
                     <table className="w-full">
                       <thead style={{ background: 'linear-gradient(to right, #581210, #7a2e0a)' }}>
                         <tr>
@@ -373,29 +374,28 @@ export default function ClassificaPage() {
                         {totalScores.map((entry, index) => (
                           <tr
                             key={`${entry.rank}-${entry.name}-${entry.totalPoints}`}
-                            className="border-b border-amber-200"
-                            style={{
-                              backgroundColor: entry.isCurrentPlayer
-                                ? '#f8e7b0'
+                            className={`border-b border-amber-200 dark:border-amber-800 ${
+                              entry.isCurrentPlayer
+                                ? 'bg-[#f8e7b0] dark:bg-palio-800'
                                 : index % 2 === 0
-                                  ? '#fdf8f0'
-                                  : '#f5ead8',
-                            }}
+                                  ? 'bg-[#fdf8f0] dark:bg-palio-950'
+                                  : 'bg-[#f5ead8] dark:bg-palio-900'
+                            }`}
                           >
-                            <td className="py-3 px-3 font-bold text-palio-700 text-lg w-8">
+                            <td className="w-8 px-3 py-3 text-lg font-bold text-palio-700 dark:text-amber-200">
                               {renderRank(entry.rank)}
                             </td>
-                            <td className="py-3 px-3 text-palio-900">
+                            <td className="px-3 py-3 text-palio-900 dark:text-amber-50">
                               <div className="font-medium">{entry.name}</div>
                               <TotalPointsSummary entry={entry} />
                             </td>
-                            <td className="py-3 px-3 text-sm text-palio-800 hidden md:table-cell">
+                            <td className="hidden px-3 py-3 text-sm text-palio-800 dark:text-amber-100/80 md:table-cell">
                               {entry.contradaName ?? 'Ospite'}
                             </td>
-                            <td className="py-3 px-3 text-right text-sm text-palio-800 hidden sm:table-cell">
+                            <td className="hidden px-3 py-3 text-right text-sm text-palio-800 dark:text-amber-100/80 sm:table-cell">
                               {entry.gamesPlayed}
                             </td>
-                            <td className="py-3 px-3 text-right font-bold text-palio-800">
+                            <td className="px-3 py-3 text-right font-bold text-palio-800 dark:text-amber-100">
                               {entry.totalPoints}
                             </td>
                           </tr>
@@ -407,8 +407,8 @@ export default function ClassificaPage() {
 
                 <section className="mb-8">
                   <div className="mb-4">
-                    <h2 className="font-medieval text-2xl text-palio-900">Classifica totale contrade</h2>
-                    <p className="text-sm text-gray-500">Somma dei punti dei giocatori associati a ogni contrada.</p>
+                    <h2 className="font-medieval text-2xl text-palio-900 dark:text-amber-100">Classifica totale contrade</h2>
+                    <p className="text-sm text-palio-600 dark:text-amber-100/70">Somma dei punti dei giocatori associati a ogni contrada.</p>
                   </div>
                   <TotalContradaTable contrade={totalContrade} />
                 </section>
@@ -420,8 +420,8 @@ export default function ClassificaPage() {
                 <section className="mb-8">
                   <div className="flex items-center justify-between gap-3 mb-4">
                     <div>
-                      <h2 className="font-medieval text-2xl text-palio-900">Classifica generale</h2>
-                      <p className="text-sm text-gray-500">Miglior punteggio personale per ogni giocatore</p>
+                      <h2 className="font-medieval text-2xl text-palio-900 dark:text-amber-100">Classifica generale</h2>
+                      <p className="text-sm text-palio-600 dark:text-amber-100/70">Miglior punteggio personale per ogni giocatore</p>
                     </div>
                   </div>
 
@@ -477,7 +477,7 @@ export default function ClassificaPage() {
                     )}
                   </div>
 
-                  <div className="rounded-xl overflow-hidden border-2 border-amber-300 shadow-lg">
+                  <div className="overflow-x-auto rounded-xl border-2 border-amber-300 shadow-lg dark:border-amber-700">
                     <table className="w-full">
                       <thead style={{ background: 'linear-gradient(to right, #581210, #7a2e0a)' }}>
                         <tr>
@@ -492,30 +492,29 @@ export default function ClassificaPage() {
                         {scores.map((entry, index) => (
                           <tr
                             key={`${entry.rank}-${entry.name}-${entry.score}`}
-                            className="border-b border-amber-200"
-                            style={{
-                              backgroundColor: entry.isCurrentPlayer
-                                ? '#f8e7b0'
+                            className={`border-b border-amber-200 dark:border-amber-800 ${
+                              entry.isCurrentPlayer
+                                ? 'bg-[#f8e7b0] dark:bg-palio-800'
                                 : index % 2 === 0
-                                  ? '#fdf8f0'
-                                  : '#f5ead8',
-                            }}
+                                  ? 'bg-[#fdf8f0] dark:bg-palio-950'
+                                  : 'bg-[#f5ead8] dark:bg-palio-900'
+                            }`}
                           >
-                            <td className="py-3 px-3 font-bold text-palio-700 text-lg w-8">
+                            <td className="w-8 px-3 py-3 text-lg font-bold text-palio-700 dark:text-amber-200">
                               {renderRank(entry.rank)}
                             </td>
-                            <td className="py-3 px-3 text-palio-900">
+                            <td className="px-3 py-3 text-palio-900 dark:text-amber-50">
                               <div className="font-medium">{entry.name}</div>
                               <EntryBadges entry={entry} />
                             </td>
-                            <td className="py-3 px-3 text-sm text-palio-800 hidden md:table-cell">
+                            <td className="hidden px-3 py-3 text-sm text-palio-800 dark:text-amber-100/80 md:table-cell">
                               {entry.contradaName ?? 'Ospite'}
                             </td>
-                            <td className="py-3 px-3 text-right font-bold text-palio-800">
+                            <td className="px-3 py-3 text-right font-bold text-palio-800 dark:text-amber-100">
                               {entry.score}
-                              <span className="text-xs text-gray-500 ml-1">{activeTab.unit}</span>
+                              <span className="ml-1 text-xs text-palio-600 dark:text-amber-100/65">{activeTab.unit}</span>
                             </td>
-                            <td className="py-3 px-3 text-right text-gray-400 text-xs hidden sm:table-cell">
+                            <td className="hidden px-3 py-3 text-right text-xs text-palio-500 dark:text-amber-100/60 sm:table-cell">
                               {entry.date}
                             </td>
                           </tr>
@@ -527,12 +526,12 @@ export default function ClassificaPage() {
 
                 <section className="mb-8">
                   <div className="mb-4">
-                    <h2 className="font-medieval text-2xl text-palio-900">Sottoclassifica per contrada</h2>
-                    <p className="text-sm text-gray-500">Ogni contrada mostra i suoi migliori giocatori nel gioco selezionato</p>
+                    <h2 className="font-medieval text-2xl text-palio-900 dark:text-amber-100">Sottoclassifica per contrada</h2>
+                    <p className="text-sm text-palio-600 dark:text-amber-100/70">Ogni contrada mostra i suoi migliori giocatori nel gioco selezionato</p>
                   </div>
 
                   {leaderboard.contrade.length === 0 ? (
-                    <div className="rounded-2xl border border-dashed border-amber-300 bg-white/80 p-6 text-center text-sm text-palio-800">
+                    <div className="rounded-2xl border border-dashed border-amber-300 bg-white/80 p-6 text-center text-sm text-palio-800 dark:border-amber-700 dark:bg-palio-900/80 dark:text-amber-100">
                       Nessun giocatore registrato con contrada ha ancora salvato un punteggio in questo gioco.
                     </div>
                   ) : (
@@ -555,25 +554,25 @@ export default function ClassificaPage() {
 
         <div className="flex flex-col gap-3 mt-8">
           {!isTotalTab && (
-            <Link to={`/giochi/${activeGameId}`} className="btn-game text-center block">
+            <Link to={`/giochi/${activeGameId}`} className="btn-game block text-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-palio-700 dark:focus-visible:outline-amber-300">
               ▶ Gioca {activeTab.label}
             </Link>
           )}
           <Link
             to="/giochi/profilo"
-            className="text-center text-palio-700 font-semibold py-3 px-6 rounded-xl border-2 border-palio-300 hover:bg-palio-50 transition-colors"
+            className="rounded-xl border-2 border-palio-300 px-6 py-3 text-center font-semibold text-palio-700 transition-colors hover:bg-palio-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-palio-700 dark:border-amber-700 dark:text-amber-100 dark:hover:bg-palio-900 dark:focus-visible:outline-amber-300"
           >
             🛡 Vai al profilo
           </Link>
           <Link
             to="/giochi"
-            className="text-center text-palio-700 font-semibold py-3 px-6 rounded-xl border-2 border-palio-300 hover:bg-palio-50 transition-colors"
+            className="rounded-xl border-2 border-palio-300 px-6 py-3 text-center font-semibold text-palio-700 transition-colors hover:bg-palio-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-palio-700 dark:border-amber-700 dark:text-amber-100 dark:hover:bg-palio-900 dark:focus-visible:outline-amber-300"
           >
             ← Tutti i giochi
           </Link>
         </div>
 
-        <p className="text-center text-amber-800/50 text-xs mt-8 font-medieval tracking-wide">
+        <p className="mt-8 text-center font-medieval text-xs tracking-wide text-amber-800/60 dark:text-amber-100/65">
           ⚜ Classifica generale e di contrada aggiornata sui migliori punteggi personali ⚜
         </p>
       </main>

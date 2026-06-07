@@ -425,7 +425,7 @@ export default function CarriolaGame() {
                 <p>🏃 Tappa veloce e spesso per andare più lontano</p>
                 <p>⏱ Hai <strong className="text-amber-300">30 secondi!</strong></p>
               </div>
-              <button onClick={startGame} className="btn-game">Parti!</button>
+              <button onClick={startGame} className="btn-game focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-amber-300">Parti!</button>
             </div>
           )}
 

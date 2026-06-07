@@ -600,7 +600,7 @@ export default function CerchioGame() {
                 <p>📏 Più vai lontano, più punti fai</p>
                 <p>♾ Non c'è limite di tempo: sopravvivi più a lungo che puoi!</p>
               </div>
-              <button onClick={startGame} className="btn-game">Rotola!</button>
+              <button onClick={startGame} className="btn-game focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-amber-300">Rotola!</button>
             </div>
           )}
 

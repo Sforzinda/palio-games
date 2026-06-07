@@ -310,14 +310,14 @@ export default function GameScoreSubmissionPanel({
 
   const badgePopup = newlyUnlockedBadges[0] ? (
     <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/60 p-4">
-      <div className="badge-unlock-popup w-full max-w-sm rounded-2xl border-4 border-amber-500 bg-gradient-to-br from-amber-50 to-amber-100 p-5 text-center shadow-2xl">
-        <p className="font-medieval text-2xl text-palio-800">Nuovo badge sbloccato!</p>
+      <div className="badge-unlock-popup w-full max-w-sm rounded-2xl border-4 border-amber-500 bg-gradient-to-br from-amber-50 to-amber-100 p-5 text-center shadow-2xl dark:border-amber-300 dark:from-palio-900 dark:to-palio-800">
+        <p className="font-medieval text-2xl text-palio-800 dark:text-amber-100">Nuovo badge sbloccato!</p>
         <div className="mt-4 flex justify-center">
           <GameBadgeMedallion badge={newlyUnlockedBadges[0]} size="lg" />
         </div>
-        <p className="mt-2 font-medieval text-xl text-palio-900">{newlyUnlockedBadges[0].name}</p>
+        <p className="mt-2 font-medieval text-xl text-palio-900 dark:text-amber-50">{newlyUnlockedBadges[0].name}</p>
         <button
-          className="btn-game mt-5 w-full"
+          className="btn-game mt-5 w-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-palio-700 dark:focus-visible:outline-amber-300"
           onClick={() => {
             setNewlyUnlockedBadges((current) => {
               const remainingBadges = current.slice(1)
@@ -338,11 +338,11 @@ export default function GameScoreSubmissionPanel({
   if (registrationDone) {
     return (
       <>
-        <div className="w-full max-w-md rounded-xl border-2 border-palio-300 bg-[#fff8e9] p-5 text-center text-palio-900 shadow-xl">
-          <p className="font-medieval text-2xl text-palio-700">{completionTitle}</p>
+        <div className="w-full max-w-md rounded-xl border-2 border-palio-300 bg-[#fff8e9] p-5 text-center text-palio-900 shadow-xl dark:border-amber-700 dark:bg-palio-900 dark:text-amber-50">
+          <p className="font-medieval text-2xl text-palio-700 dark:text-amber-100">{completionTitle}</p>
           <div className="mt-4 flex flex-col gap-3">
-            <button onClick={onPlayAgain} className="btn-game">Rigioca</button>
-            <button onClick={onViewLeaderboard} className="btn-game">Vedi classifica</button>
+            <button onClick={onPlayAgain} className="btn-game focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-palio-700 dark:focus-visible:outline-amber-300">Rigioca</button>
+            <button onClick={onViewLeaderboard} className="btn-game focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-palio-700 dark:focus-visible:outline-amber-300">Vedi classifica</button>
           </div>
         </div>
         {badgePopup}
@@ -355,27 +355,27 @@ export default function GameScoreSubmissionPanel({
       <>
         <form
           onSubmit={handleRegistrationSubmit}
-          className="w-full max-w-md rounded-xl border-2 border-palio-300 bg-[#fff8e9] p-5 text-left text-palio-900 shadow-xl"
+          className="w-full max-w-md rounded-xl border-2 border-palio-300 bg-[#fff8e9] p-5 text-left text-palio-900 shadow-xl dark:border-amber-700 dark:bg-palio-900 dark:text-amber-50"
         >
           <div className="grid gap-3">
-            <label className="text-sm text-palio-900">
-              <span className="mb-1 block font-semibold text-palio-700">Nome</span>
+            <label className="text-sm text-palio-900 dark:text-amber-100">
+              <span className="mb-1 block font-semibold text-palio-700 dark:text-amber-200">Nome</span>
               <input
                 value={form.name}
                 onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))}
-                className="input-field w-full text-palio-900 placeholder:text-palio-300"
+                className="input-field w-full text-palio-900 placeholder:text-palio-300 dark:border-amber-700 dark:bg-palio-950 dark:text-amber-50 dark:placeholder:text-amber-100/45"
                 maxLength={40}
                 required
               />
             </label>
 
-            <label className="text-sm text-palio-900">
-              <span className="mb-1 block font-semibold text-palio-700">Email</span>
+            <label className="text-sm text-palio-900 dark:text-amber-100">
+              <span className="mb-1 block font-semibold text-palio-700 dark:text-amber-200">Email</span>
               <input
                 type="email"
                 value={form.email}
                 onChange={(event) => setForm((current) => ({ ...current, email: event.target.value.toLocaleLowerCase('it-IT') }))}
-                className="input-field w-full text-palio-900 placeholder:text-palio-300"
+                className="input-field w-full text-palio-900 placeholder:text-palio-300 dark:border-amber-700 dark:bg-palio-950 dark:text-amber-50 dark:placeholder:text-amber-100/45"
                 inputMode="email"
                 autoComplete="email"
                 autoCapitalize="none"
@@ -385,12 +385,12 @@ export default function GameScoreSubmissionPanel({
               />
             </label>
 
-            <label className="text-sm text-palio-900">
-              <span className="mb-1 block font-semibold text-palio-700">Citta di residenza</span>
+            <label className="text-sm text-palio-900 dark:text-amber-100">
+              <span className="mb-1 block font-semibold text-palio-700 dark:text-amber-200">Citta di residenza</span>
               <input
                 value={form.city}
                 onChange={(event) => setForm((current) => ({ ...current, city: toTitleCaseCity(event.target.value) }))}
-                className="input-field w-full text-palio-900 placeholder:text-palio-300"
+                className="input-field w-full text-palio-900 placeholder:text-palio-300 dark:border-amber-700 dark:bg-palio-950 dark:text-amber-50 dark:placeholder:text-amber-100/45"
                 maxLength={80}
                 autoCapitalize="words"
                 autoCorrect="off"
@@ -399,13 +399,13 @@ export default function GameScoreSubmissionPanel({
               />
             </label>
 
-            <label className="text-sm text-palio-900">
-              <span className="mb-1 block font-semibold text-palio-700">Eta</span>
+            <label className="text-sm text-palio-900 dark:text-amber-100">
+              <span className="mb-1 block font-semibold text-palio-700 dark:text-amber-200">Eta</span>
               <input
                 type="text"
                 value={form.age}
                 onChange={(event) => setForm((current) => ({ ...current, age: toDigitsOnly(event.target.value).slice(0, 3) }))}
-                className="input-field w-full text-palio-900 placeholder:text-palio-300"
+                className="input-field w-full text-palio-900 placeholder:text-palio-300 dark:border-amber-700 dark:bg-palio-950 dark:text-amber-50 dark:placeholder:text-amber-100/45"
                 inputMode="numeric"
                 pattern="[0-9]*"
                 autoComplete="off"
@@ -414,12 +414,12 @@ export default function GameScoreSubmissionPanel({
               />
             </label>
 
-            <label className="text-sm text-palio-900">
-              <span className="mb-1 block font-semibold text-palio-700">Contrada</span>
+            <label className="text-sm text-palio-900 dark:text-amber-100">
+              <span className="mb-1 block font-semibold text-palio-700 dark:text-amber-200">Contrada</span>
               <select
                 value={form.contradaSlug}
                 onChange={(event) => setForm((current) => ({ ...current, contradaSlug: event.target.value }))}
-                className="input-field w-full text-palio-900"
+                className="input-field w-full text-palio-900 dark:border-amber-700 dark:bg-palio-950 dark:text-amber-50"
                 required
               >
                 <option value="">Seleziona una contrada</option>
@@ -430,22 +430,22 @@ export default function GameScoreSubmissionPanel({
                 ))}
               </select>
               {!hasLoadedContrade && (
-                <span className="mt-1 block text-xs text-amber-900/70">Caricamento contrade...</span>
+                <span className="mt-1 block text-xs text-amber-900/70 dark:text-amber-100/70">Caricamento contrade...</span>
               )}
             </label>
           </div>
 
           {errorMessage && (
-            <p className="mt-3 text-sm text-red-700">{errorMessage}</p>
+            <p className="mt-3 text-sm text-red-700 dark:text-red-300">{errorMessage}</p>
           )}
 
           <div className="mt-4 flex flex-col gap-3">
-            <button type="submit" disabled={registering} className="btn-game disabled:opacity-50 disabled:cursor-not-allowed">
+            <button type="submit" disabled={registering} className="btn-game disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-palio-700 dark:focus-visible:outline-amber-300">
               {registering ? 'Registrazione...' : 'Conferma registrazione'}
             </button>
             <button
               type="button"
-              className="text-sm font-semibold text-palio-700 underline underline-offset-2 hover:text-palio-900"
+              className="text-sm font-semibold text-palio-700 underline underline-offset-2 hover:text-palio-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-palio-700 dark:text-amber-100 dark:hover:text-amber-50 dark:focus-visible:outline-amber-300"
               onClick={() => {
                 setShowRegistrationForm(false)
                 setErrorMessage('')
@@ -465,16 +465,16 @@ export default function GameScoreSubmissionPanel({
       <>
         <form
           onSubmit={handleLoginSubmit}
-          className="w-full max-w-md rounded-xl border-2 border-palio-300 bg-[#fff8e9] p-5 text-left text-palio-900 shadow-xl"
+          className="w-full max-w-md rounded-xl border-2 border-palio-300 bg-[#fff8e9] p-5 text-left text-palio-900 shadow-xl dark:border-amber-700 dark:bg-palio-900 dark:text-amber-50"
         >
           <div className="grid gap-3">
-            <label className="text-sm text-palio-900">
-              <span className="mb-1 block font-semibold text-palio-700">Email</span>
+            <label className="text-sm text-palio-900 dark:text-amber-100">
+              <span className="mb-1 block font-semibold text-palio-700 dark:text-amber-200">Email</span>
               <input
                 type="email"
                 value={loginForm.email}
                 onChange={(event) => setLoginForm((current) => ({ ...current, email: event.target.value.toLocaleLowerCase('it-IT') }))}
-                className="input-field w-full text-palio-900 placeholder:text-palio-300"
+                className="input-field w-full text-palio-900 placeholder:text-palio-300 dark:border-amber-700 dark:bg-palio-950 dark:text-amber-50 dark:placeholder:text-amber-100/45"
                 inputMode="email"
                 autoComplete="email"
                 autoCapitalize="none"
@@ -484,24 +484,24 @@ export default function GameScoreSubmissionPanel({
               />
             </label>
 
-            <label className="text-sm text-palio-900">
-              <span className="mb-1 block font-semibold text-palio-700">Password</span>
+            <label className="text-sm text-palio-900 dark:text-amber-100">
+              <span className="mb-1 block font-semibold text-palio-700 dark:text-amber-200">Password</span>
               <input
                 type="password"
                 value={loginForm.password}
                 onChange={(event) => setLoginForm((current) => ({ ...current, password: event.target.value }))}
-                className="input-field w-full text-palio-900 placeholder:text-palio-300"
+                className="input-field w-full text-palio-900 placeholder:text-palio-300 dark:border-amber-700 dark:bg-palio-950 dark:text-amber-50 dark:placeholder:text-amber-100/45"
                 autoComplete="current-password"
                 required
               />
             </label>
 
-            <label className="text-sm text-palio-900">
-              <span className="mb-1 block font-semibold text-palio-700">Contrada</span>
+            <label className="text-sm text-palio-900 dark:text-amber-100">
+              <span className="mb-1 block font-semibold text-palio-700 dark:text-amber-200">Contrada</span>
               <select
                 value={loginForm.contradaSlug}
                 onChange={(event) => setLoginForm((current) => ({ ...current, contradaSlug: event.target.value }))}
-                className="input-field w-full text-palio-900"
+                className="input-field w-full text-palio-900 dark:border-amber-700 dark:bg-palio-950 dark:text-amber-50"
                 required
               >
                 <option value="">Seleziona una contrada</option>
@@ -512,22 +512,22 @@ export default function GameScoreSubmissionPanel({
                 ))}
               </select>
               {!hasLoadedContrade && (
-                <span className="mt-1 block text-xs text-amber-900/70">Caricamento contrade...</span>
+                <span className="mt-1 block text-xs text-amber-900/70 dark:text-amber-100/70">Caricamento contrade...</span>
               )}
             </label>
           </div>
 
           {errorMessage && (
-            <p className="mt-3 text-sm text-red-700">{errorMessage}</p>
+            <p className="mt-3 text-sm text-red-700 dark:text-red-300">{errorMessage}</p>
           )}
 
           <div className="mt-4 flex flex-col gap-3">
-            <button type="submit" disabled={loggingIn} className="btn-game disabled:opacity-50 disabled:cursor-not-allowed">
+            <button type="submit" disabled={loggingIn} className="btn-game disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-palio-700 dark:focus-visible:outline-amber-300">
               {loggingIn ? 'Accesso...' : 'Accedi e abbina il punteggio'}
             </button>
             <button
               type="button"
-              className="text-sm font-semibold text-palio-700 underline underline-offset-2 hover:text-palio-900"
+              className="text-sm font-semibold text-palio-700 underline underline-offset-2 hover:text-palio-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-palio-700 dark:text-amber-100 dark:hover:text-amber-50 dark:focus-visible:outline-amber-300"
               onClick={() => {
                 setShowLoginForm(false)
                 setErrorMessage('')
@@ -546,7 +546,7 @@ export default function GameScoreSubmissionPanel({
     <>
       <div className="w-full max-w-md flex flex-col items-center gap-3">
         {!isScoreValid && (
-          <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-center text-sm text-red-800">
+          <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-center text-sm text-red-800 dark:border-red-400/70 dark:bg-red-950 dark:text-red-100">
             {integrityMessage ?? 'Partita non valida: rigioca senza automatismi.'}
           </p>
         )}
@@ -554,20 +554,20 @@ export default function GameScoreSubmissionPanel({
           value={playerName}
           onChange={(event) => setPlayerName(event.target.value)}
           placeholder="Il tuo nome"
-          className="input-field w-full max-w-xs text-center"
+          className="input-field w-full max-w-xs text-center text-palio-900 placeholder:text-palio-300 dark:border-amber-700 dark:bg-palio-950 dark:text-amber-50 dark:placeholder:text-amber-100/45"
           maxLength={20}
           onKeyDown={(event) => event.key === 'Enter' && handleSaveScore()}
           readOnly={isTrackedPlayer}
         />
         {isTrackedPlayer && (
-          <p className="text-center text-sm text-palio-700">
+          <p className="text-center text-sm text-palio-700 dark:text-amber-100/80">
             Il punteggio verra salvato automaticamente sul tuo profilo.
           </p>
         )}
         <button
           onClick={handleSaveScore}
           disabled={!isNameValid || savingScore || !isScoreValid}
-          className="btn-game disabled:opacity-50 disabled:cursor-not-allowed"
+          className="btn-game disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-palio-700 dark:focus-visible:outline-amber-300"
         >
           {savingScore ? 'Salvataggio...' : 'Salva punteggio'}
         </button>
@@ -576,23 +576,23 @@ export default function GameScoreSubmissionPanel({
             <button
               onClick={handleOpenRegistration}
               disabled={!isNameValid || savingScore || registering || loggingIn || !isScoreValid}
-              className="btn-game disabled:opacity-50 disabled:cursor-not-allowed"
+              className="btn-game disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-palio-700 dark:focus-visible:outline-amber-300"
             >
               Registrati e salva i progressi
             </button>
             <button
               onClick={handleOpenLogin}
               disabled={savingScore || registering || loggingIn || !isScoreValid}
-              className="text-sm font-semibold text-palio-700 underline underline-offset-2 hover:text-palio-900 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="text-sm font-semibold text-palio-700 underline underline-offset-2 hover:text-palio-900 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-palio-700 dark:text-amber-100 dark:hover:text-amber-50 dark:focus-visible:outline-amber-300"
             >
               Ho gia un account, accedi
             </button>
           </>
         )}
         {errorMessage && (
-          <p className="text-sm text-red-700">{errorMessage}</p>
+          <p className="text-sm text-red-700 dark:text-red-300">{errorMessage}</p>
         )}
-        <button onClick={onPlayAgain} className="text-sm font-semibold text-palio-700 underline underline-offset-2 hover:text-palio-900">
+        <button onClick={onPlayAgain} className="text-sm font-semibold text-palio-700 underline underline-offset-2 hover:text-palio-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-palio-700 dark:text-amber-100 dark:hover:text-amber-50 dark:focus-visible:outline-amber-300">
           Rigioca
         </button>
       </div>

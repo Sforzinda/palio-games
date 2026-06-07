@@ -665,7 +665,7 @@ export default function MelocotognoGame() {
                 <p>💨 Il vento cambia ad ogni lancio — leggi l'indicatore!</p>
                 <p>⏱ Hai 20 secondi!</p>
               </div>
-              <button onClick={startGame} className="btn-game">Inizia!</button>
+              <button onClick={startGame} className="btn-game focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-amber-300">Inizia!</button>
             </div>
           )}
 
