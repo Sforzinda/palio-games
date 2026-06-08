@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import GameBadgeMedallion from '../../components/GameBadgeMedallion'
 import { usePalioGamesLayout } from '../../PalioGamesProvider'
-import { getGamePlayerProfile, loginGamePlayerWithContrada, updateGamePlayerProfile, type GamePlayerProfile, type UnlockedBadge } from '../../lib/game-badges'
-import { clearGamePlayerSession, getGamePlayerSession, saveGamePlayerSession } from '../../lib/game-player-session'
+import { GamePlayerProfileError, getGamePlayerProfile, loginGamePlayerWithContrada, updateGamePlayerProfile, type GamePlayerProfile, type UnlockedBadge } from '../../lib/game-badges'
+import { clearGamePlayerSession, getGamePlayerSession, saveGamePlayerSession, type GamePlayerSession } from '../../lib/game-player-session'
 import { getContrade } from '../../lib/contrade'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -14,12 +14,28 @@ interface ContradaOption {
   slug: string
 }
 
+// Profilo provvisorio costruito dalla sessione in cache: permette di mostrare
+// subito l'utente come autenticato dopo un refresh, prima/indipendentemente dalla
+// rivalidazione dal server (i conteggi vengono aggiornati quando il fetch riesce).
+function buildProfileFromSession(session: GamePlayerSession): GamePlayerProfile {
+  return {
+    name: session.name,
+    email: session.email,
+    city: session.city,
+    contradaSlug: session.contradaSlug ?? null,
+    contradaName: session.contradaName ?? null,
+    totalGamesPlayed: 0,
+    gameStats: [],
+  }
+}
+
 export default function ProfiloPage() {
   const { Header, Footer } = usePalioGamesLayout()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [profile, setProfile] = useState<GamePlayerProfile | null>(null)
   const [badges, setBadges] = useState<UnlockedBadge[]>([])
+  const [staleNotice, setStaleNotice] = useState('')
   const [contrade, setContrade] = useState<ContradaOption[]>([])
   const [contradeLoading, setContradeLoading] = useState(true)
 
@@ -38,15 +54,39 @@ export default function ProfiloPage() {
   const [editCity, setEditCity] = useState('')
   const [editContradaSlug, setEditContradaSlug] = useState('')
 
-  const loadProfile = (email: string) => {
-    setLoading(true)
+  // `silent` rivalida senza spinner a tutta pagina, mantenendo a video i dati in
+  // cache della sessione (usato al refresh per evitare logout/flicker inattesi).
+  const loadProfile = (email: string, options?: { silent?: boolean }) => {
+    if (!options?.silent) setLoading(true)
     setError('')
+    setStaleNotice('')
     getGamePlayerProfile(email)
       .then((result) => {
         setProfile(result.profile)
         setBadges(result.badges)
+        setStaleNotice('')
       })
       .catch((fetchError) => {
+        // Sessione non valida (profilo inesistente): richiedi un login esplicito.
+        if (fetchError instanceof GamePlayerProfileError && fetchError.notFound) {
+          clearGamePlayerSession()
+          setProfile(null)
+          setBadges([])
+          setError('')
+          setStaleNotice('')
+          return
+        }
+
+        // Errore transitorio (rete/server): non disconnettere l'utente, mantieni i
+        // dati della sessione in cache cosi' resta riconosciuto e puo' continuare.
+        const session = getGamePlayerSession()
+        if (session?.email) {
+          setProfile((current) => current ?? buildProfileFromSession(session))
+          setError('')
+          setStaleNotice('Profilo non aggiornato: connessione al server non riuscita. I dati mostrati potrebbero non essere recenti.')
+          return
+        }
+
         setError(fetchError instanceof Error ? fetchError.message : 'Errore nel caricamento profilo.')
       })
       .finally(() => {
@@ -85,7 +125,11 @@ export default function ProfiloPage() {
     }
 
     setLoginContradaSlug(session.contradaSlug ?? '')
-    loadProfile(session.email)
+    // Riconoscimento automatico: mostra subito i dati dalla sessione in cache,
+    // poi rivalida dal server in background senza bloccare la pagina.
+    setProfile(buildProfileFromSession(session))
+    setLoading(false)
+    loadProfile(session.email, { silent: true })
   }, [])
 
   useEffect(() => {
@@ -130,6 +174,7 @@ export default function ProfiloPage() {
       setEditMode(false)
       setSaveError('')
       setSaveSuccess('')
+      setStaleNotice('')
     } catch (err) {
       setLoginError(err instanceof Error ? err.message : 'Email, password o contrada non corretti.')
     } finally {
@@ -202,6 +247,7 @@ export default function ProfiloPage() {
     setEditMode(false)
     setSaveError('')
     setSaveSuccess('')
+    setStaleNotice('')
     setTimeout(() => emailInputRef.current?.focus(), 50)
   }
 
@@ -337,6 +383,11 @@ export default function ProfiloPage() {
                 {saveSuccess && (
                   <div className="mt-4 rounded-xl border border-emerald-700 bg-emerald-50 px-4 py-3 text-sm text-emerald-900 dark:border-emerald-400 dark:bg-emerald-950 dark:text-emerald-100">
                     {saveSuccess}
+                  </div>
+                )}
+                {staleNotice && (
+                  <div className="mt-4 rounded-xl border border-amber-600 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-400 dark:bg-amber-950 dark:text-amber-100">
+                    {staleNotice}
                   </div>
                 )}
                 <div className="mt-3 grid gap-4 sm:grid-cols-4">

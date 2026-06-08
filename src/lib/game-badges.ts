@@ -46,6 +46,21 @@ interface GameProfileResponse {
   message?: string
 }
 
+/**
+ * Errore sollevato durante il caricamento del profilo giocatore.
+ * `notFound` distingue una sessione non valida (profilo inesistente, va richiesto
+ * un nuovo login) da un errore transitorio (rete/server, la sessione resta valida).
+ */
+export class GamePlayerProfileError extends Error {
+  readonly notFound: boolean
+
+  constructor(message: string, notFound: boolean) {
+    super(message)
+    this.name = 'GamePlayerProfileError'
+    this.notFound = notFound
+  }
+}
+
 export async function completeGameSession(payload: CompleteGameSessionPayload): Promise<{
   totalGamesPlayed: number | null
   unlockedBadges: UnlockedBadge[]
@@ -89,7 +104,10 @@ export async function getGamePlayerProfile(email: string): Promise<{
   }
 
   if (!response.ok || !body?.success || !body.profile) {
-    throw new Error(body?.message || 'Errore durante il caricamento del profilo.')
+    throw new GamePlayerProfileError(
+      body?.message || 'Errore durante il caricamento del profilo.',
+      response.status === 404,
+    )
   }
 
   return {
