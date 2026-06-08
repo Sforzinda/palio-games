@@ -135,7 +135,6 @@ export async function loginGamePlayerWithContrada(email: string, password: strin
 
 interface UpdateGamePlayerProfilePayload {
   email: string
-  password: string
   name: string
   city: string
   contradaSlug: string

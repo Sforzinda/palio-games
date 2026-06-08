@@ -37,7 +37,6 @@ export default function ProfiloPage() {
   const [editName, setEditName] = useState('')
   const [editCity, setEditCity] = useState('')
   const [editContradaSlug, setEditContradaSlug] = useState('')
-  const [editPassword, setEditPassword] = useState('')
 
   const loadProfile = (email: string) => {
     setLoading(true)
@@ -162,11 +161,6 @@ export default function ProfiloPage() {
       return
     }
 
-    if (!editPassword) {
-      setSaveError('Inserisci la password attuale per salvare le modifiche.')
-      return
-    }
-
     setSavingProfile(true)
     setSaveError('')
     setSaveSuccess('')
@@ -174,7 +168,6 @@ export default function ProfiloPage() {
     try {
       const updatedProfile = await updateGamePlayerProfile({
         email: profile.email,
-        password: editPassword,
         name: trimmedName,
         city: trimmedCity,
         contradaSlug: trimmedContradaSlug,
@@ -189,7 +182,6 @@ export default function ProfiloPage() {
         contradaName: updatedProfile.contradaName ?? undefined,
       })
       setEditMode(false)
-      setEditPassword('')
       setSaveSuccess('Profilo aggiornato con successo.')
     } catch (err) {
       setSaveError(err instanceof Error ? err.message : 'Errore durante il salvataggio del profilo.')
@@ -210,7 +202,6 @@ export default function ProfiloPage() {
     setEditMode(false)
     setSaveError('')
     setSaveSuccess('')
-    setEditPassword('')
     setTimeout(() => emailInputRef.current?.focus(), 50)
   }
 
@@ -330,7 +321,6 @@ export default function ProfiloPage() {
                       setEditMode((current) => !current)
                       setSaveError('')
                       setSaveSuccess('')
-                      setEditPassword('')
                       syncEditForm(profile)
                     }}
                     className="text-sm font-semibold text-palio-700 underline underline-offset-2 hover:text-palio-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-palio-700 dark:text-amber-100 dark:hover:text-amber-50 dark:focus-visible:outline-amber-300"
@@ -410,17 +400,6 @@ export default function ProfiloPage() {
                             </option>
                           ))}
                         </select>
-                      </label>
-                      <label className="text-sm text-amber-900 dark:text-amber-100">
-                        <span className="mb-1 block font-semibold">Password attuale</span>
-                        <input
-                          type="password"
-                          value={editPassword}
-                          onChange={(event) => setEditPassword(event.target.value)}
-                          className="input-field w-full text-palio-900 placeholder:text-palio-300 dark:border-amber-700 dark:bg-palio-950 dark:text-amber-50 dark:placeholder:text-amber-100/45"
-                          placeholder="Necessaria per salvare"
-                          required
-                        />
                       </label>
                     </div>
                     {saveError && (
