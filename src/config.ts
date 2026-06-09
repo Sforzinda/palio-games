@@ -8,7 +8,13 @@ export function initPalioGames(options: {
   supabaseAnonKey: string
   functionsBasePath?: string
 }): void {
-  supabaseClient = createClient(options.supabaseUrl, options.supabaseAnonKey)
+  supabaseClient = createClient(options.supabaseUrl, options.supabaseAnonKey, {
+    auth: {
+      autoRefreshToken: false,
+      detectSessionInUrl: false,
+      persistSession: false,
+    },
+  })
   if (options.functionsBasePath) {
     functionsBasePath = options.functionsBasePath
   }
