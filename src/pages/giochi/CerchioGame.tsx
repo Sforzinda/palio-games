@@ -81,7 +81,7 @@ export default function CerchioGame() {
 
     // ---- DRAW ----
 
-    function drawBackground(c: CanvasRenderingContext2D, w: number, h: number, _bgOffset: number) {
+    function drawBackground(c: CanvasRenderingContext2D, w: number, h: number) {
       const sky = c.createLinearGradient(0, 0, 0, h * 0.48)
       sky.addColorStop(0, '#2a6aad')
       sky.addColorStop(0.5, '#5b9bd5')
@@ -492,7 +492,7 @@ export default function CerchioGame() {
       const w = canvas.width
       const h = canvas.height
       ctx.clearRect(0, 0, w, h)
-      drawBackground(ctx, w, h, s.bgOffset)
+      drawBackground(ctx, w, h)
       drawDangerVignette(ctx, s, w, h)
       drawPerspectiveTrack(ctx, w, h, s.bgOffset)
       drawPlayer(ctx, s, w, h)
@@ -515,7 +515,6 @@ export default function CerchioGame() {
       const s = stateRef.current
       if (s.phase !== 'playing') return
 
-      let tapX: number
       let clientX: number
       let clientY: number
       if (e instanceof TouchEvent) {
@@ -531,7 +530,7 @@ export default function CerchioGame() {
 
       const rect = canvas.getBoundingClientRect()
       const scaleX = rect.width > 0 ? canvas.width / rect.width : 1
-      tapX = (clientX - rect.left) * scaleX
+      const tapX = (clientX - rect.left) * scaleX
       if (!integrityRef.current.recordInput(e, { x: clientX, y: clientY })) return
 
       const w = canvas.width

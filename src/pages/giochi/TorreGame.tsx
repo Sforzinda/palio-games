@@ -226,7 +226,7 @@ export default function TorreGame() {
       return `rgb(${r},${g},${b})`
     }
 
-    function drawMovingBlock(c: CanvasRenderingContext2D, s: GameState, h: number, _w: number) {
+    function drawMovingBlock(c: CanvasRenderingContext2D, s: GameState, h: number) {
       const m = s.moving
       // Il blocco in movimento è sempre nella stessa posizione Y visiva
       // (sopra l'ultimo blocco)
@@ -362,7 +362,7 @@ export default function TorreGame() {
       drawBackground(ctx, w, h, s)
       // Disegna blocchi dal basso all'alto
       s.blocks.forEach((b) => drawBlock(ctx, b, s.cameraY, h, w))
-      if (s.phase === 'playing') drawMovingBlock(ctx, s, h, w)
+      if (s.phase === 'playing') drawMovingBlock(ctx, s, h)
       drawChunks(ctx, s.chunks, s.cameraY, h)
       if (s.phase === 'playing') drawHUD(ctx, s, w, h)
     }
