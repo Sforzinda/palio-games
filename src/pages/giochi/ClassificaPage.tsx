@@ -357,6 +357,9 @@ export default function ClassificaPage() {
                     <p className="text-sm text-palio-600 dark:text-amber-100/70">
                       In ogni gioco il primo prende tanti punti quanti sono i giocatori classificati, l'ultimo prende 1 punto.
                     </p>
+                    <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-palio-700 dark:text-amber-200/80">
+                      Classifica finale: conta solo i punteggi dell'edizione in corso del FantaPalio.
+                    </p>
                   </div>
 
                   <div className="overflow-x-auto rounded-xl border-2 border-amber-300 shadow-lg dark:border-amber-700">
@@ -409,6 +412,9 @@ export default function ClassificaPage() {
                   <div className="mb-4">
                     <h2 className="font-medieval text-2xl text-palio-900 dark:text-amber-100">Classifica totale contrade</h2>
                     <p className="text-sm text-palio-600 dark:text-amber-100/70">Somma dei punti dei giocatori associati a ogni contrada.</p>
+                    <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-palio-700 dark:text-amber-200/80">
+                      Classifica finale: conta solo i punteggi dell'edizione in corso del FantaPalio.
+                    </p>
                   </div>
                   <TotalContradaTable contrade={totalContrade} />
                 </section>
@@ -422,6 +428,9 @@ export default function ClassificaPage() {
                     <div>
                       <h2 className="font-medieval text-2xl text-palio-900 dark:text-amber-100">Classifica generale</h2>
                       <p className="text-sm text-palio-600 dark:text-amber-100/70">Miglior punteggio personale per ogni giocatore</p>
+                      <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-palio-700 dark:text-amber-200/80">
+                        Classifica a record: tutti i punteggi di sempre, di qualsiasi edizione.
+                      </p>
                     </div>
                   </div>
 
@@ -528,6 +537,9 @@ export default function ClassificaPage() {
                   <div className="mb-4">
                     <h2 className="font-medieval text-2xl text-palio-900 dark:text-amber-100">Sottoclassifica per contrada</h2>
                     <p className="text-sm text-palio-600 dark:text-amber-100/70">Ogni contrada mostra i suoi migliori giocatori nel gioco selezionato</p>
+                    <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-palio-700 dark:text-amber-200/80">
+                      Classifica a record: tutti i punteggi di sempre, di qualsiasi edizione.
+                    </p>
                   </div>
 
                   {leaderboard.contrade.length === 0 ? (
