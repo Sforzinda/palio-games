@@ -471,6 +471,9 @@ export default function ProfiloPage() {
                 {profile.gameStats.length > 0 && (
                   <div className="mt-8">
                     <h2 className="font-medieval text-2xl text-palio-900 dark:text-amber-100">Statistiche per gioco</h2>
+                    <p className="mt-1 text-sm text-palio-600 dark:text-amber-100/70">
+                      Comprendono tutte le tue partite da sempre, di qualsiasi edizione. La classifica generale conta solo l'edizione in corso.
+                    </p>
                     <div className="mt-4 grid gap-3 sm:grid-cols-2">
                       {profile.gameStats.map((stat) => (
                         <div
