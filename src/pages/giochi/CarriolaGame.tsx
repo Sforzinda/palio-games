@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import GamePlayShell from '../../components/GamePlayShell'
 import GameScoreSubmissionPanel from '../../components/GameScoreSubmissionPanel'
 import { createGameIntegrityTracker, type GameIntegrityResult } from '../../lib/game-anti-cheat'
+import { roundRect } from '../../lib/game-canvas'
 
 type GamePhase = 'idle' | 'playing' | 'gameover'
 
@@ -73,14 +74,18 @@ export default function CarriolaGame() {
     }
   }
 
+  useLayoutEffect(() => {
+    if (canvasRef.current) syncCanvasLayout(canvasRef.current)
+  }, [phase])
+
   useEffect(() => {
     const canvas = canvasRef.current!
     const ctx = canvas.getContext('2d')!
     const resize = () => syncCanvasLayout(canvas)
-    const resizeObserver = new ResizeObserver(resize)
+    const resizeObserver = typeof ResizeObserver === 'function' ? new ResizeObserver(resize) : null
 
     window.addEventListener('resize', resize)
-    resizeObserver.observe(canvas)
+    resizeObserver?.observe(canvas)
     resize()
 
     // --- DRAW HELPERS ---
@@ -217,7 +222,7 @@ export default function CarriolaGame() {
       const runPhase = Date.now() * 0.008
       const legOffset = Math.sin(runPhase) * (velocity > 50 ? 18 : 5)
       c.fillStyle = '#c8a060'
-      c.beginPath(); c.roundRect(65, -70, 22, 35, 5); c.fill()
+      c.beginPath(); roundRect(c, 65, -70, 22, 35, 5); c.fill()
       c.fillStyle = '#f4c488'
       c.beginPath(); c.arc(76, -80, 16, 0, Math.PI * 2); c.fill()
       c.strokeStyle = '#c8a060'; c.lineWidth = 8; c.lineCap = 'round'
@@ -235,9 +240,9 @@ export default function CarriolaGame() {
 
       // Metri
       c.fillStyle = 'rgba(61,26,9,0.92)'
-      c.beginPath(); c.roundRect(pad, pad, 160, 52, 10); c.fill()
+      c.beginPath(); roundRect(c, pad, pad, 160, 52, 10); c.fill()
       c.strokeStyle = '#fee46e'; c.lineWidth = 1.5
-      c.beginPath(); c.roundRect(pad, pad, 160, 52, 10); c.stroke()
+      c.beginPath(); roundRect(c, pad, pad, 160, 52, 10); c.stroke()
       c.fillStyle = '#fee46e'
       c.font = `bold ${h * 0.024}px Cinzel, serif`
       c.textAlign = 'left'
@@ -249,9 +254,9 @@ export default function CarriolaGame() {
       // Timer
       const urgent = s.timeLeft <= 5
       c.fillStyle = urgent ? 'rgba(180,30,20,0.95)' : 'rgba(61,26,9,0.92)'
-      c.beginPath(); c.roundRect(w - 115 - pad, pad, 115, 52, 10); c.fill()
+      c.beginPath(); roundRect(c, w - 115 - pad, pad, 115, 52, 10); c.fill()
       c.strokeStyle = urgent ? '#ff9090' : '#fee46e'; c.lineWidth = 1.5
-      c.beginPath(); c.roundRect(w - 115 - pad, pad, 115, 52, 10); c.stroke()
+      c.beginPath(); roundRect(c, w - 115 - pad, pad, 115, 52, 10); c.stroke()
       c.fillStyle = '#fee46e'
       c.font = `bold ${h * 0.024}px Cinzel, serif`
       c.textAlign = 'right'
@@ -267,14 +272,14 @@ export default function CarriolaGame() {
       const barX = w / 2 - barW / 2
       const barY = pad + 19
       c.fillStyle = 'rgba(0,0,0,0.45)'
-      c.beginPath(); c.roundRect(barX, barY, barW, barH, barH / 2); c.fill()
+      c.beginPath(); roundRect(c, barX, barY, barW, barH, barH / 2); c.fill()
       if (velRatio > 0) {
         const velGrad = c.createLinearGradient(barX, 0, barX + barW, 0)
         velGrad.addColorStop(0, '#2a9d8f')
         velGrad.addColorStop(0.6, '#e9c46a')
         velGrad.addColorStop(1, '#e63946')
         c.fillStyle = velGrad
-        c.beginPath(); c.roundRect(barX, barY, barW * velRatio, barH, barH / 2); c.fill()
+        c.beginPath(); roundRect(c, barX, barY, barW * velRatio, barH, barH / 2); c.fill()
       }
       c.fillStyle = '#fee46e'
       c.font = `bold ${h * 0.02}px Cinzel, serif`
@@ -284,7 +289,7 @@ export default function CarriolaGame() {
       // Suggerimento iniziale
       if (s.timeLeft > 25) {
         c.fillStyle = 'rgba(0,0,0,0.35)'
-        c.beginPath(); c.roundRect(w / 2 - 145, h - 58, 290, 50, 8); c.fill()
+        c.beginPath(); roundRect(c, w / 2 - 145, h - 58, 290, 50, 8); c.fill()
         c.font = `bold ${h * 0.022}px Inter, sans-serif`
         c.fillStyle = '#ffdd88'; c.textAlign = 'center'
         c.fillText('👆 TAPPA più volte e con più dita!', w / 2, h - 36)
@@ -379,7 +384,7 @@ export default function CarriolaGame() {
     return () => {
       cancelAnimationFrame(rafRef.current)
       window.removeEventListener('resize', resize)
-      resizeObserver.disconnect()
+      resizeObserver?.disconnect()
       canvas.removeEventListener('touchstart', handleTouchStart)
       canvas.removeEventListener('mousedown', handleMouseDown)
     }

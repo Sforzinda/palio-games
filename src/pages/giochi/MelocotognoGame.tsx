@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import GamePlayShell from '../../components/GamePlayShell'
 import GameScoreSubmissionPanel from '../../components/GameScoreSubmissionPanel'
 import { createGameIntegrityTracker, type GameIntegrityResult } from '../../lib/game-anti-cheat'
+import { roundRect } from '../../lib/game-canvas'
 
 type GamePhase = 'idle' | 'playing' | 'gameover'
 
@@ -120,14 +121,18 @@ export default function MelocotognoGame() {
     ]
   }
 
+  useLayoutEffect(() => {
+    if (canvasRef.current) syncCanvasLayout(canvasRef.current)
+  }, [phase])
+
   useEffect(() => {
     const canvas = canvasRef.current!
     const ctx = canvas.getContext('2d')!
     const resize = () => syncCanvasLayout(canvas)
-    const resizeObserver = new ResizeObserver(resize)
+    const resizeObserver = typeof ResizeObserver === 'function' ? new ResizeObserver(resize) : null
 
     window.addEventListener('resize', resize)
-    resizeObserver.observe(canvas)
+    resizeObserver?.observe(canvas)
     resize()
 
     // ---- DRAW ----
@@ -285,7 +290,7 @@ export default function MelocotognoGame() {
         const zx = tx - z.w / 2
         // Ombra
         c.fillStyle = 'rgba(0,0,0,0.3)'
-        c.beginPath(); c.roundRect(zx + 3, z.y + 3, z.w, z.h, 6); c.fill()
+        c.beginPath(); roundRect(c, zx + 3, z.y + 3, z.w, z.h, 6); c.fill()
         // Gradiente colore per zona
         const zg = c.createLinearGradient(zx, z.y, zx, z.y + z.h)
         if (z.points === 10) {
@@ -296,11 +301,11 @@ export default function MelocotognoGame() {
           zg.addColorStop(0, '#b09010'); zg.addColorStop(1, '#706008')
         }
         c.fillStyle = zg
-        c.beginPath(); c.roundRect(zx, z.y, z.w, z.h, 6); c.fill()
+        c.beginPath(); roundRect(c, zx, z.y, z.w, z.h, 6); c.fill()
         // Bordo luminoso per zona 10pt
         c.strokeStyle = z.points === 10 ? '#fee46e' : '#7a5500'
         c.lineWidth = z.points === 10 ? 2.5 : 1.5
-        c.beginPath(); c.roundRect(zx, z.y, z.w, z.h, 6); c.stroke()
+        c.beginPath(); roundRect(c, zx, z.y, z.w, z.h, 6); c.stroke()
         // Etichetta
         c.fillStyle = z.points === 10 ? '#fff' : '#2a1a00'
         c.font = `bold ${Math.max(9, h * 0.024)}px Cinzel, serif`
@@ -379,7 +384,7 @@ export default function MelocotognoGame() {
       const label = mag < 0.08 ? '🌿 Prossimo lancio: calmo' : `💨 Prossimo lancio: ${windDir} ${windDesc}`
       const boxW = 210
       c.fillStyle = 'rgba(0,0,0,0.55)'
-      c.beginPath(); c.roundRect(wx - boxW / 2, wy - 13, boxW, 26, 8); c.fill()
+      c.beginPath(); roundRect(c, wx - boxW / 2, wy - 13, boxW, 26, 8); c.fill()
       c.fillStyle = mag < 0.08 ? '#90ee90' : mag < 0.45 ? '#b8f0b8' : mag < 0.78 ? '#ffdd55' : '#ff8844'
       c.font = `bold ${h * 0.023}px Inter, sans-serif`
       c.textAlign = 'center'
@@ -390,9 +395,9 @@ export default function MelocotognoGame() {
       const pad = 12
       // Punteggio
       c.fillStyle = 'rgba(61,26,9,0.92)'
-      c.beginPath(); c.roundRect(pad, pad, 115, 52, 10); c.fill()
+      c.beginPath(); roundRect(c, pad, pad, 115, 52, 10); c.fill()
       c.strokeStyle = '#fee46e'; c.lineWidth = 1.5
-      c.beginPath(); c.roundRect(pad, pad, 115, 52, 10); c.stroke()
+      c.beginPath(); roundRect(c, pad, pad, 115, 52, 10); c.stroke()
       c.fillStyle = '#fee46e'
       c.font = `bold ${h * 0.025}px Cinzel, serif`
       c.textAlign = 'left'
@@ -404,9 +409,9 @@ export default function MelocotognoGame() {
       // Timer
       const urgent = s.timeLeft <= 5
       c.fillStyle = urgent ? 'rgba(180,30,20,0.95)' : 'rgba(61,26,9,0.92)'
-      c.beginPath(); c.roundRect(w - 115 - pad, pad, 115, 52, 10); c.fill()
+      c.beginPath(); roundRect(c, w - 115 - pad, pad, 115, 52, 10); c.fill()
       c.strokeStyle = urgent ? '#ff9090' : '#fee46e'; c.lineWidth = 1.5
-      c.beginPath(); c.roundRect(w - 115 - pad, pad, 115, 52, 10); c.stroke()
+      c.beginPath(); roundRect(c, w - 115 - pad, pad, 115, 52, 10); c.stroke()
       c.fillStyle = '#fee46e'
       c.font = `bold ${h * 0.025}px Cinzel, serif`
       c.textAlign = 'right'
@@ -435,7 +440,7 @@ export default function MelocotognoGame() {
       // Suggerimento iniziale
       if (s.timeLeft > 17.5) {
         c.fillStyle = 'rgba(0,0,0,0.6)'
-        c.beginPath(); c.roundRect(w / 2 - 165, h - 58, 330, 38, 10); c.fill()
+        c.beginPath(); roundRect(c, w / 2 - 165, h - 58, 330, 38, 10); c.fill()
         c.fillStyle = '#fff'
         c.font = `${h * 0.025}px Inter, sans-serif`
         c.textAlign = 'center'
@@ -614,7 +619,7 @@ export default function MelocotognoGame() {
     return () => {
       cancelAnimationFrame(rafRef.current)
       window.removeEventListener('resize', resize)
-      resizeObserver.disconnect()
+      resizeObserver?.disconnect()
       canvas.removeEventListener('touchstart', handleInput)
       canvas.removeEventListener('mousedown', handleInput)
     }
