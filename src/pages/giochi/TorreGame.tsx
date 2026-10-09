@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import GamePlayShell from '../../components/GamePlayShell'
 import GameScoreSubmissionPanel from '../../components/GameScoreSubmissionPanel'
 import { createGameIntegrityTracker, type GameIntegrityResult } from '../../lib/game-anti-cheat'
+import { roundRect } from '../../lib/game-canvas'
 
 type GamePhase = 'idle' | 'playing' | 'gameover'
 
@@ -276,9 +277,9 @@ export default function TorreGame() {
       const pad = 12
       // Livello / altezza
       c.fillStyle = 'rgba(61,26,9,0.92)'
-      c.beginPath(); c.roundRect(pad, pad, 120, 52, 10); c.fill()
+      c.beginPath(); roundRect(c, pad, pad, 120, 52, 10); c.fill()
       c.strokeStyle = '#fee46e'; c.lineWidth = 1.5
-      c.beginPath(); c.roundRect(pad, pad, 120, 52, 10); c.stroke()
+      c.beginPath(); roundRect(c, pad, pad, 120, 52, 10); c.stroke()
       c.fillStyle = '#fee46e'
       c.font = `bold ${h * 0.024}px Cinzel, serif`
       c.textAlign = 'left'
@@ -289,9 +290,9 @@ export default function TorreGame() {
 
       // Altimetro a destra
       c.fillStyle = 'rgba(61,26,9,0.92)'
-      c.beginPath(); c.roundRect(w - 130 - pad, pad, 130, 52, 10); c.fill()
+      c.beginPath(); roundRect(c, w - 130 - pad, pad, 130, 52, 10); c.fill()
       c.strokeStyle = '#fee46e'; c.lineWidth = 1.5
-      c.beginPath(); c.roundRect(w - 130 - pad, pad, 130, 52, 10); c.stroke()
+      c.beginPath(); roundRect(c, w - 130 - pad, pad, 130, 52, 10); c.stroke()
       c.fillStyle = '#fee46e'
       c.font = `bold ${h * 0.024}px Cinzel, serif`
       c.textAlign = 'right'
@@ -311,9 +312,9 @@ export default function TorreGame() {
         c.scale(scale, scale)
         // Sfondo popup
         c.fillStyle = 'rgba(30, 120, 50, 0.88)'
-        c.beginPath(); c.roundRect(-115, -28, 230, 52, 14); c.fill()
+        c.beginPath(); roundRect(c, -115, -28, 230, 52, 14); c.fill()
         c.strokeStyle = '#90ee90'; c.lineWidth = 2
-        c.beginPath(); c.roundRect(-115, -28, 230, 52, 14); c.stroke()
+        c.beginPath(); roundRect(c, -115, -28, 230, 52, 14); c.stroke()
         // Testo
         c.fillStyle = '#ffffff'
         c.font = `bold ${h * 0.055}px Cinzel, serif`

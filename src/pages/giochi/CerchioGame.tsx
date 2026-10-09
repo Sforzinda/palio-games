@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import GamePlayShell from '../../components/GamePlayShell'
 import GameScoreSubmissionPanel from '../../components/GameScoreSubmissionPanel'
 import { createGameIntegrityTracker, type GameIntegrityResult } from '../../lib/game-anti-cheat'
+import { roundRect } from '../../lib/game-canvas'
 
 type GamePhase = 'idle' | 'playing' | 'gameover'
 
@@ -135,9 +136,9 @@ export default function CerchioGame() {
         for (let col = -1; col < Math.ceil(w / stoneW) + 2; col++) {
           const px = col * stoneW - scrollX + rowOff
           c.fillStyle = (row + col) % 2 === 0 ? 'rgba(180,145,85,0.55)' : 'rgba(200,168,108,0.45)'
-          c.beginPath(); c.roundRect(px + 1, py + 1, stoneW - 2, stoneH - 2, 3); c.fill()
+          c.beginPath(); roundRect(c, px + 1, py + 1, stoneW - 2, stoneH - 2, 3); c.fill()
           c.strokeStyle = 'rgba(120,85,35,0.5)'; c.lineWidth = 0.7
-          c.beginPath(); c.roundRect(px + 1, py + 1, stoneW - 2, stoneH - 2, 3); c.stroke()
+          c.beginPath(); roundRect(c, px + 1, py + 1, stoneW - 2, stoneH - 2, 3); c.stroke()
         }
       }
 
@@ -322,15 +323,15 @@ export default function CerchioGame() {
         palm.addColorStop(1, '#a86f3c')
         c.fillStyle = palm
         c.beginPath()
-        c.roundRect(-gloveSize * 0.48, -gloveSize * 0.3, gloveSize * 0.9, gloveSize * 0.56, 10)
+        roundRect(c, -gloveSize * 0.48, -gloveSize * 0.3, gloveSize * 0.9, gloveSize * 0.56, 10)
         c.fill()
         c.strokeStyle = '#8B5E30'; c.lineWidth = 1.5
         c.beginPath()
-        c.roundRect(-gloveSize * 0.48, -gloveSize * 0.3, gloveSize * 0.9, gloveSize * 0.56, 10)
+        roundRect(c, -gloveSize * 0.48, -gloveSize * 0.3, gloveSize * 0.9, gloveSize * 0.56, 10)
         c.stroke()
         c.fillStyle = '#f2c27d'
         c.beginPath()
-        c.roundRect(-gloveSize * 0.2, -gloveSize * 0.42, gloveSize * 0.36, gloveSize * 0.2, 6)
+        roundRect(c, -gloveSize * 0.2, -gloveSize * 0.42, gloveSize * 0.36, gloveSize * 0.2, 6)
         c.fill()
         c.restore()
       }
@@ -347,15 +348,15 @@ export default function CerchioGame() {
       const ratio = Math.abs(s.tilt) / MAX_TILT
 
       c.fillStyle = 'rgba(0,0,0,0.45)'
-      c.beginPath(); c.roundRect(cx - barW / 2, iy, barW, barH, barH / 2); c.fill()
+      c.beginPath(); roundRect(c, cx - barW / 2, iy, barW, barH, barH / 2); c.fill()
       const safeW = barW * 0.28
       c.fillStyle = '#2a9d2a'
-      c.beginPath(); c.roundRect(cx - safeW / 2, iy, safeW, barH, barH / 2); c.fill()
+      c.beginPath(); roundRect(c, cx - safeW / 2, iy, safeW, barH, barH / 2); c.fill()
       if (ratio > 0.5) {
         const dangerAlpha = (ratio - 0.5) * 2 * 0.8
         c.fillStyle = `rgba(220, 40, 20, ${dangerAlpha})`
-        c.beginPath(); c.roundRect(cx - barW / 2, iy, barW * 0.2, barH, barH / 2); c.fill()
-        c.beginPath(); c.roundRect(cx + barW * 0.3, iy, barW * 0.2, barH, barH / 2); c.fill()
+        c.beginPath(); roundRect(c, cx - barW / 2, iy, barW * 0.2, barH, barH / 2); c.fill()
+        c.beginPath(); roundRect(c, cx + barW * 0.3, iy, barW * 0.2, barH, barH / 2); c.fill()
       }
       const indX = cx + (s.tilt / MAX_TILT) * (barW / 2)
       const indColor = ratio < 0.5 ? '#fee46e' : ratio < 0.75 ? '#ffaa00' : '#ff3333'
@@ -381,9 +382,9 @@ export default function CerchioGame() {
 
       // Distanza
       c.fillStyle = 'rgba(61,26,9,0.92)'
-      c.beginPath(); c.roundRect(pad, pad, 140, 52, 10); c.fill()
+      c.beginPath(); roundRect(c, pad, pad, 140, 52, 10); c.fill()
       c.strokeStyle = '#fee46e'; c.lineWidth = 1.5
-      c.beginPath(); c.roundRect(pad, pad, 140, 52, 10); c.stroke()
+      c.beginPath(); roundRect(c, pad, pad, 140, 52, 10); c.stroke()
       c.fillStyle = '#fee46e'
       c.font = `bold ${h * 0.024}px Cinzel, serif`
       c.textAlign = 'left'
@@ -394,9 +395,9 @@ export default function CerchioGame() {
 
       // Tempo sopravvissuto (in alto a destra, informativo)
       c.fillStyle = 'rgba(61,26,9,0.92)'
-      c.beginPath(); c.roundRect(w - 130 - pad, pad, 130, 52, 10); c.fill()
+      c.beginPath(); roundRect(c, w - 130 - pad, pad, 130, 52, 10); c.fill()
       c.strokeStyle = '#fee46e'; c.lineWidth = 1.5
-      c.beginPath(); c.roundRect(w - 130 - pad, pad, 130, 52, 10); c.stroke()
+      c.beginPath(); roundRect(c, w - 130 - pad, pad, 130, 52, 10); c.stroke()
       c.fillStyle = '#fee46e'
       c.font = `bold ${h * 0.024}px Cinzel, serif`
       c.textAlign = 'right'
@@ -420,7 +421,7 @@ export default function CerchioGame() {
       // Istruzione iniziale
       if (s.elapsed < 3) {
         c.fillStyle = 'rgba(0,0,0,0.6)'
-        c.beginPath(); c.roundRect(w / 2 - 165, h - 58, 330, 38, 10); c.fill()
+        c.beginPath(); roundRect(c, w / 2 - 165, h - 58, 330, 38, 10); c.fill()
         c.fillStyle = '#fff'
         c.font = `${h * 0.024}px Inter, sans-serif`
         c.textAlign = 'center'
