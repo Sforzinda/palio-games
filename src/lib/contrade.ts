@@ -10,7 +10,7 @@ export const getContrade = async (): Promise<{ data: ContradaOption[] | null; er
   try {
     const client = getSupabaseClient()
     const { data, error } = await client
-      .from('contrade')
+      .from('game_contrade')
       .select('id, name, slug')
       .eq('active', true)
       .order('name')
